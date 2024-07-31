@@ -18,7 +18,7 @@ import static java.util.Objects.isNull;
 @RestController
 public class UserController {
     public Map<Integer, User> users = new HashMap<>();
-    public static int count;
+    public static int count = 1;
 
     @PostMapping("/users")
     public User createUser(@RequestBody User user) {

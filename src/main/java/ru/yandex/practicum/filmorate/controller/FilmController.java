@@ -18,7 +18,7 @@ import static java.util.Objects.isNull;
 @RestController
 public class FilmController {
     Map<Integer, Film> films = new HashMap<>();
-    public static int count;
+    public static int count = 1;
 
     @PostMapping("/films")
     public Film addFilm(@RequestBody Film film) {
