@@ -20,7 +20,7 @@ public class UserController {
     public Map<Integer, User> users = new HashMap<>();
     public static int count;
 
-    @PostMapping("/user")
+    @PostMapping("/users")
     public User createUser(@RequestBody User user) {
         validate(user);
         user.setId(generateId());
@@ -28,7 +28,7 @@ public class UserController {
         return users.get(user.getId());
     }
 
-    @PutMapping("/user")
+    @PutMapping("/users")
     public User updateUser(@RequestBody User user) {
         validate(user);
         User userToUpdate = users.get(user.getId());
