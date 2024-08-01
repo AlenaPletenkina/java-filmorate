@@ -19,9 +19,9 @@ import static java.util.Objects.isNull;
 public class FilmController {
     Map<Integer, Film> films = new HashMap<>();
     public static int count = 1;
-    private final String PATH_FILMS = "/films";
+    private final String PATH = "/films";
 
-    @PostMapping(PATH_FILMS)
+    @PostMapping(PATH)
     public Film addFilm(@RequestBody Film film) {
         validate(film);
         film.setId(generateId());
@@ -29,7 +29,7 @@ public class FilmController {
         return films.get(film.getId());
     }
 
-    @PutMapping(PATH_FILMS)
+    @PutMapping(PATH)
     public Film updateFilm(@RequestBody Film film) {
         validate(film);
         Film filmToUpdate = films.get(film.getId());
@@ -40,7 +40,7 @@ public class FilmController {
         return filmToUpdate;
     }
 
-    @GetMapping(PATH_FILMS)
+    @GetMapping(PATH)
     public List<Film> getAllFilms() {
         Collection<Film> listOfFilms = films.values();
         return listOfFilms.stream().toList();

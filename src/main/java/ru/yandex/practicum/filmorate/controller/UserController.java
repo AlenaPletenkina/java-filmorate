@@ -19,9 +19,9 @@ import static java.util.Objects.isNull;
 public class UserController {
     public Map<Integer, User> users = new HashMap<>();
     public static int count = 1;
-    private final String PATH_USERS = "/users";
+    private final String PATH = "/users";
 
-    @PostMapping(PATH_USERS)
+    @PostMapping(PATH)
     public User createUser(@RequestBody User user) {
         validate(user);
         user.setId(generateId());
@@ -29,7 +29,7 @@ public class UserController {
         return users.get(user.getId());
     }
 
-    @PutMapping(PATH_USERS)
+    @PutMapping(PATH)
     public User updateUser(@RequestBody User user) {
         validate(user);
         User userToUpdate = users.get(user.getId());
@@ -40,7 +40,7 @@ public class UserController {
         return userToUpdate;
     }
 
-    @GetMapping(PATH_USERS)
+    @GetMapping(PATH)
     public List<User> getAllUsers() {
         Collection<User> listOfUsers = users.values();
         return listOfUsers.stream().toList();
