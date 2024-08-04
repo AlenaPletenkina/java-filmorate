@@ -1,0 +1,77 @@
+package ru.yandex.practicum.filmorate.controller;
+
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import ru.yandex.practicum.filmorate.exception.ValidationException;
+import ru.yandex.practicum.filmorate.model.Film;
+
+import java.time.LocalDate;
+
+public class FilmControllerTest {
+    Film film;
+
+    @Test
+    void validateNotAddFilmWithEmptyName() {
+        film = Film.builder()
+                .name("")
+                .description("Двое бандитов Винсент Вега и Джулс Винфилд ведут философские беседы в " +
+                        "перерывах между разборками")
+                .releaseDate(LocalDate.of(1994, 5, 21))
+                .duration(154)
+                .build();
+        FilmController filmController = new FilmController();
+        Assertions.assertThrows(ValidationException.class, () -> {
+            filmController.addFilm(film);
+        }, "Пустое название фильма");
+    }
+
+    @Test
+    void validateNotAddFilmWithLongDescription() {
+        film = Film.builder()
+                .name("Криминальное чтиво")
+                .description("Двое бандитов Винсент Вега и Джулс Винфилд ведут философские беседы в " +
+                        "перерывах между разборками  и решением проблем с должниками криминального босса Марселласа " +
+                        "Уоллеса.\n" +
+                        "\n" +
+                        "В первой истории Винсент проводит незабываемый вечер с женой Марселласа Мией. Во второй " +
+                        "Марселлас покупает боксёра Бутча Кулиджа, чтобы тот сдал бой. В третьей истории" +
+                        " Винсент и Джулс по нелепой случайности попадают в неприятности.")
+                .releaseDate(LocalDate.of(1994, 5, 21))
+                .duration(154)
+                .build();
+        FilmController filmController = new FilmController();
+        Assertions.assertThrows(ValidationException.class, () -> {
+            filmController.addFilm(film);
+        }, "Описание превышает 200 символов");
+    }
+
+    @Test
+    void validateNotAddFilmWithReleaseDateLaterThanNow() {
+        film = Film.builder()
+                .name("Криминальное чтиво")
+                .description("Двое бандитов Винсент Вега и Джулс Винфилд ведут философские беседы в " +
+                        "перерывах между разборками")
+                .releaseDate(LocalDate.of(1800, 9, 21))
+                .duration(154)
+                .build();
+        FilmController filmController = new FilmController();
+        Assertions.assertThrows(ValidationException.class, () -> {
+            filmController.addFilm(film);
+        }, "Фильм создан ранее,чем 1895.12.28");
+    }
+
+    @Test
+    void validateNotAddFilmIfDurationEqualsZero() {
+        film = Film.builder()
+                .name("Криминальное чтиво")
+                .description("Двое бандитов Винсент Вега и Джулс Винфилд ведут философские беседы в " +
+                        "перерывах между разборками")
+                .releaseDate(LocalDate.of(1994, 5, 21))
+                .duration(0)
+                .build();
+        FilmController filmController = new FilmController();
+        Assertions.assertThrows(ValidationException.class, () -> {
+            filmController.addFilm(film);
+        }, "Продолжительность равно нулю");
+    }
+}
