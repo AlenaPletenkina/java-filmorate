@@ -42,7 +42,7 @@ public class InMemoryUserStorage implements UserStorage {
     }
 
     @Override
-    public User getUserById(Integer id){
+    public User getUserById(Integer id) {
         if (!users.containsKey(id)) {
             throw new NotFoundException("Пользователь с id " + id + " не существует");
         }
