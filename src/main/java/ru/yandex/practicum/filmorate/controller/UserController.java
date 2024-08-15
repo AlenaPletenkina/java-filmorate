@@ -11,9 +11,7 @@ import java.util.List;
 @Slf4j
 @RestController
 public class UserController {
-
     private final String path = "/users";
-
     private final UserService userService;
 
     @Autowired

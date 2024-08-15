@@ -11,7 +11,6 @@ import java.util.List;
 @Slf4j
 @RestController
 public class FilmController {
-
     private final String path = "/films";
     private final FilmService filmService;
 
