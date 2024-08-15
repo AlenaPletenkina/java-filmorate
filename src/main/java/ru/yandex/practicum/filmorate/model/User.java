@@ -1,16 +1,16 @@
 package ru.yandex.practicum.filmorate.model;
 
-import lombok.AccessLevel;
-import lombok.Builder;
-import lombok.Data;
-import lombok.Singular;
+import lombok.*;
 import lombok.experimental.FieldDefaults;
 
 import java.time.LocalDate;
+import java.util.HashSet;
 import java.util.Set;
 
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @Data
+@NoArgsConstructor
+@AllArgsConstructor
 @Builder
 public class User {
     Integer id;
@@ -18,6 +18,5 @@ public class User {
     String login;
     String name;
     LocalDate birthday;
-    @Singular
-    Set<Integer> friends;
+    Set<Integer> friends = new HashSet<>();
 }
