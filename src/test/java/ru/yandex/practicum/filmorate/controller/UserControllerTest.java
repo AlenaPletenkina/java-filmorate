@@ -1,14 +1,20 @@
+
 package ru.yandex.practicum.filmorate.controller;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.User;
 
 import java.time.LocalDate;
 
+@SpringBootTest
 public class UserControllerTest {
-    User user;
+    private User user;
+    @Autowired
+    private UserController userController;
 
     @Test
     void validateNotCreateUserWithEmptyEmail() {
@@ -18,7 +24,7 @@ public class UserControllerTest {
                 .name("Алена")
                 .birthday(LocalDate.of(1993, 6, 4))
                 .build();
-        UserController userController = new UserController();
+
         Assertions.assertThrows(ValidationException.class, () -> {
             userController.createUser(user);
         }, "Пустой email");
@@ -32,7 +38,6 @@ public class UserControllerTest {
                 .name("Алена")
                 .birthday(LocalDate.of(1993, 6, 4))
                 .build();
-        UserController userController = new UserController();
         Assertions.assertThrows(ValidationException.class, () -> {
             userController.createUser(user);
         }, "Пустой login");
@@ -46,7 +51,6 @@ public class UserControllerTest {
                 .name("Алена")
                 .birthday(LocalDate.of(2025, 6, 4))
                 .build();
-        UserController userController = new UserController();
         Assertions.assertThrows(ValidationException.class, () -> {
             userController.createUser(user);
         }, "Дата рождения раньше сегодняшней даты");
@@ -61,8 +65,8 @@ public class UserControllerTest {
                 .birthday(LocalDate.of(1993, 6, 4))
                 .build();
 
-        UserController userController = new UserController();
         User userCreate = userController.createUser(user);
         Assertions.assertEquals(userCreate.getName(), userCreate.getLogin(), "Вместо имени присвоен login");
     }
 }
+

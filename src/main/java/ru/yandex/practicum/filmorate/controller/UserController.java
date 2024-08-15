@@ -1,78 +1,60 @@
 package ru.yandex.practicum.filmorate.controller;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-import ru.yandex.practicum.filmorate.exception.NotFoundException;
-import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.User;
+import ru.yandex.practicum.filmorate.service.UserService;
 
-import java.time.LocalDate;
-import java.util.Collection;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-
-import static java.util.Objects.isNull;
 
 @Slf4j
 @RestController
+@RequiredArgsConstructor
 public class UserController {
-    public Map<Integer, User> users = new HashMap<>();
-    public static int count = 1;
+
     private final String path = "/users";
+
+    @Autowired
+    private final UserService userService;
 
     @PostMapping(path)
     public User createUser(@RequestBody User user) {
-        validate(user);
-        user.setId(generateId());
-        users.put(user.getId(), user);
-        return users.get(user.getId());
+        return userService.createUser(user);
     }
 
     @PutMapping(path)
     public User updateUser(@RequestBody User user) {
-        validate(user);
-        User userToUpdate = users.get(user.getId());
-        if (isNull(userToUpdate)) {
-            throw new NotFoundException("Пользователь с id " + user.getId() + " не найден");
-        }
-        update(user, userToUpdate);
-        return userToUpdate;
+        return userService.updateUser(user);
     }
 
     @GetMapping(path)
     public List<User> getAllUsers() {
-        Collection<User> listOfUsers = users.values();
-        return listOfUsers.stream().toList();
+        return userService.getAllUsers();
     }
 
-    private void update(User user, User userToUpdate) {
-        userToUpdate.setBirthday(user.getBirthday());
-        userToUpdate.setName(user.getName());
-        userToUpdate.setEmail(user.getEmail());
-        userToUpdate.setLogin(user.getLogin());
+    @GetMapping(path + "/{id}")
+    public User getUser(@PathVariable Integer id) {
+        return userService.getUserById(id);
     }
 
-    private void validate(User user) {
-        if (isNull(user.getEmail()) || user.getEmail().isEmpty() || !user.getEmail().contains("@")) {
-            log.error("Email пуст, либо не содержит знак @ {}", user.getEmail());
-            throw new ValidationException("Поле email должно быть заполнено и содержать знак @");
-        }
-        if (isNull(user.getLogin()) || user.getLogin().isEmpty() || user.getLogin().contains(" ")) {
-            log.error("Login пуст, либо содержит в себе пробелы {}", user.getLogin());
-            throw new ValidationException("Поле login должен быть заполнен и не должен содержать пробелы");
-        }
-        if (user.getBirthday().isAfter(LocalDate.now())) {
-            log.error("Дата рождения позже сегодняшней даты {}", user.getBirthday());
-            throw new ValidationException("Дата рождения не может быть в будущем");
-        }
-        if (isNull(user.getName()) || user.getName().isEmpty()) {
-            log.warn("Вместо пустого имени присваивается логин");
-            user.setName(user.getLogin());
-        }
+    @PutMapping(path+"/{id}/friends/{friendId}")
+    public void addFriend(@PathVariable Integer id, @PathVariable Integer friendId) {
+        userService.addFriend(id,friendId);
+    }
+    @DeleteMapping(path+"/{id}/friends/{friendId}")
+    public void deleteFriend(@PathVariable Integer id, @PathVariable Integer friendId) {
+        userService.deleteFriend(id,friendId);
     }
 
-    private int generateId() {
-        return count++;
+    @GetMapping(path + "/{id}/friends")
+    public List<User> getFriends(@PathVariable Integer id) {
+        return userService.getAllUserFriends(id);
+    }
+
+    @GetMapping(path + "/{id}/friends/common/{otherId}")
+    public List<User> getMutualFriends(@PathVariable Integer id, @PathVariable Integer otherId) {
+        return userService.getMutualFriends(id,otherId);
     }
 }

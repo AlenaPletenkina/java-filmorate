@@ -2,13 +2,19 @@ package ru.yandex.practicum.filmorate.controller;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.Film;
 
 import java.time.LocalDate;
 
+@SpringBootTest
 public class FilmControllerTest {
     Film film;
+
+    @Autowired
+    private FilmController filmController;
 
     @Test
     void validateNotAddFilmWithEmptyName() {
@@ -19,7 +25,6 @@ public class FilmControllerTest {
                 .releaseDate(LocalDate.of(1994, 5, 21))
                 .duration(154)
                 .build();
-        FilmController filmController = new FilmController();
         Assertions.assertThrows(ValidationException.class, () -> {
             filmController.addFilm(film);
         }, "Пустое название фильма");
@@ -39,7 +44,6 @@ public class FilmControllerTest {
                 .releaseDate(LocalDate.of(1994, 5, 21))
                 .duration(154)
                 .build();
-        FilmController filmController = new FilmController();
         Assertions.assertThrows(ValidationException.class, () -> {
             filmController.addFilm(film);
         }, "Описание превышает 200 символов");
@@ -54,7 +58,6 @@ public class FilmControllerTest {
                 .releaseDate(LocalDate.of(1800, 9, 21))
                 .duration(154)
                 .build();
-        FilmController filmController = new FilmController();
         Assertions.assertThrows(ValidationException.class, () -> {
             filmController.addFilm(film);
         }, "Фильм создан ранее,чем 1895.12.28");
@@ -69,7 +72,6 @@ public class FilmControllerTest {
                 .releaseDate(LocalDate.of(1994, 5, 21))
                 .duration(0)
                 .build();
-        FilmController filmController = new FilmController();
         Assertions.assertThrows(ValidationException.class, () -> {
             filmController.addFilm(film);
         }, "Продолжительность равно нулю");
