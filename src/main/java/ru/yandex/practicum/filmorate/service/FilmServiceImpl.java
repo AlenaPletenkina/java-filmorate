@@ -70,7 +70,7 @@ public class FilmServiceImpl implements FilmService {
             log.info("Приступаю к созданию фильма");
             Film addFilm = filmStorage.addFilm(film);
             List<Genre> genres1 = film.getGenres();
-            if(nonNull(genres1)){
+            if (nonNull(genres1)) {
                 Set<Genre> genres = new HashSet<>(genres1);
                 for (Genre genre : genres) {
                     genreService.setGenre(addFilm.getId(), genre.getId());
