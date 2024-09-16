@@ -15,7 +15,8 @@ import static java.util.Objects.isNull;
 @Slf4j
 public class GenreServiceImpl implements GenreService {
     private final GenreDao genreDbStorage;
-@Autowired
+
+    @Autowired
     public GenreServiceImpl(GenreDao genreDbStorage) {
         this.genreDbStorage = genreDbStorage;
     }
@@ -28,7 +29,7 @@ public class GenreServiceImpl implements GenreService {
     @Override
     public Genre getGenre(Integer id) {
         Genre genre = genreDbStorage.getGenre(id);
-        if(isNull(genre)){
+        if (isNull(genre)) {
             throw new NotFoundException("Жанра с таким id не существует");
         }
         return genre;
@@ -36,13 +37,13 @@ public class GenreServiceImpl implements GenreService {
 
     @Override
     public void setGenre(Integer idFilm, Integer idGenre) {
-        genreDbStorage.setGenres(idFilm,idGenre);
+        genreDbStorage.setGenres(idFilm, idGenre);
         log.info("Добавил жанр {} к фильму {}", idGenre, idFilm);
     }
 
     @Override
     public List<Genre> getFilmGenres(Integer filmId) {
-        log.info("Приступаю к поиску жанров для фильма {}",filmId);
+        log.info("Приступаю к поиску жанров для фильма {}", filmId);
         List<Genre> filmGenres = genreDbStorage.getFilmGenres(filmId);
         log.info("Нашел {} жанров к фильму", filmGenres.size());
         return filmGenres;
