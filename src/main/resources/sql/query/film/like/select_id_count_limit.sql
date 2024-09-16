@@ -1,5 +1,0 @@
-SELECT DISTINCT film_id
-FROM FILM_LIKES
-GROUP BY film_id
-ORDER BY COUNT(user_id) DESC, film_id
-    LIMIT ?
