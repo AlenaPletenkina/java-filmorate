@@ -10,6 +10,7 @@ import ru.yandex.practicum.filmorate.model.Rating;
 import ru.yandex.practicum.filmorate.utill.UtilReader;
 
 import java.util.List;
+
 @Component
 @Repository
 @RequiredArgsConstructor
