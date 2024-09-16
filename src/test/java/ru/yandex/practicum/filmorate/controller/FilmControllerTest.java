@@ -1,20 +1,27 @@
 package ru.yandex.practicum.filmorate.controller;
 
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.jdbc.core.JdbcTemplate;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.Film;
+import ru.yandex.practicum.filmorate.utill.UtilReader;
 
 import java.time.LocalDate;
 
 @SpringBootTest
+@AutoConfigureTestDatabase
 public class FilmControllerTest {
     Film film;
 
     @Autowired
     private FilmController filmController;
+    @Autowired
+    private JdbcTemplate jdbcTemplate;
 
     @Test
     void validateNotAddFilmWithEmptyName() {
@@ -75,5 +82,10 @@ public class FilmControllerTest {
         Assertions.assertThrows(ValidationException.class, () -> {
             filmController.addFilm(film);
         }, "Продолжительность равно нулю");
+    }
+    @BeforeEach
+    public void beforeEach() {
+        jdbcTemplate.update(UtilReader.readString("src/test/resources/drop.sql"));
+        jdbcTemplate.update(UtilReader.readString("src/main/resources/schema.sql"));
     }
 }

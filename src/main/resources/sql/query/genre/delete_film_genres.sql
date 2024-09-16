@@ -1,0 +1,3 @@
+DELETE
+FROM FILM_GENRES
+WHERE film_id = ?

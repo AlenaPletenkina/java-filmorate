@@ -1,0 +1,3 @@
+SELECT *
+FROM MPA_RATING
+ORDER BY rating_id

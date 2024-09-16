@@ -1,0 +1,3 @@
+SELECT *
+FROM GENRES
+ORDER BY genre_id
