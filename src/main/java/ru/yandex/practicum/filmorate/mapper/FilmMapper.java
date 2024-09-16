@@ -7,6 +7,7 @@ import ru.yandex.practicum.filmorate.model.Rating;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+
 @Service
 public class FilmMapper implements RowMapper<Film> {
 
@@ -18,7 +19,7 @@ public class FilmMapper implements RowMapper<Film> {
                 .description(rs.getString("description"))
                 .releaseDate(rs.getDate("release_date").toLocalDate())
                 .duration(rs.getInt("duration"))
-                .mpa(new Rating(rs.getInt("rating_id"),rs.getString("rating_name")))
+                .mpa(new Rating(rs.getInt("rating_id"), rs.getString("rating_name")))
                 .likes(rs.getInt("rate"))
                 .build();
     }
