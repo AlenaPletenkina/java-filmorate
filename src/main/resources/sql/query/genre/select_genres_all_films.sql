@@ -1,0 +1,6 @@
+SELECT FILM.film_id, GENRES.*
+FROM FILM
+         LEFT JOIN FILM_GENRES ON FILM.film_id = FILM_GENRES.film_id
+         LEFT JOIN GENRES ON  FILM_GENRES.genre_id = GENRES.genre_id
+WHERE FILM_GENRES.genre_id IS NOT NULL
+ORDER BY FILM.film_id

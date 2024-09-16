@@ -4,8 +4,7 @@ import lombok.*;
 import lombok.experimental.FieldDefaults;
 
 import java.time.LocalDate;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @Data
@@ -18,6 +17,7 @@ public class Film {
     String description;
     LocalDate releaseDate;
     Integer duration;
-    Set<Integer> likes = new HashSet<>();
-
+    Integer likes;
+    Rating mpa;
+    List<Genre> genres;
 }
