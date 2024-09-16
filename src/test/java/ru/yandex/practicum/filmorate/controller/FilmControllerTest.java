@@ -83,6 +83,7 @@ public class FilmControllerTest {
             filmController.addFilm(film);
         }, "Продолжительность равно нулю");
     }
+
     @BeforeEach
     public void beforeEach() {
         jdbcTemplate.update(UtilReader.readString("src/test/resources/drop.sql"));
