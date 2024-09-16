@@ -6,5 +6,6 @@ import java.util.List;
 
 public interface RatingService {
     List<Rating> getAllRating();
+
     Rating getRatingByID(Integer id);
 }

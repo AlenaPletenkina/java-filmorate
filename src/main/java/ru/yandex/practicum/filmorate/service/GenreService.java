@@ -8,7 +8,10 @@ public interface GenreService {
     List<Genre> getGenres();
 
     Genre getGenre(Integer id);
-    void setGenre(Integer idFilm,Integer idGenre);
+
+    void setGenre(Integer idFilm, Integer idGenre);
+
     List<Genre> getFilmGenres(Integer filmId);
+
     void clearFilmGenres(Integer filmId);
 }
