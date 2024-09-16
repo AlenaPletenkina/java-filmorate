@@ -6,7 +6,7 @@ import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Repository;
-import ru.yandex.practicum.filmorate.exception.UserAlreadyExistException;
+import ru.yandex.practicum.filmorate.exception.UserExistException;
 import ru.yandex.practicum.filmorate.mapper.UserMapper;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.storage.user.UserStorage;
@@ -45,9 +45,9 @@ public class UserDbStorage implements UserStorage {
             return getUserById(keyHolder.getKey().intValue());
         } catch (Exception e) {
             if (e.getMessage().contains("EMAIL")) {
-                throw new UserAlreadyExistException("EMAIL", object.getEmail());
+                throw new UserExistException("EMAIL", object.getEmail());
             } else if (e.getMessage().contains("LOGIN")) {
-                throw new UserAlreadyExistException("LOGIN", object.getLogin());
+                throw new UserExistException("LOGIN", object.getLogin());
             } else {
                 throw new UnsupportedOperationException(e.getMessage());
             }
