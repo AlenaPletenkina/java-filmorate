@@ -1,6 +1,7 @@
 package ru.yandex.practicum.filmorate.dao.review;
 
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
@@ -12,14 +13,15 @@ import ru.yandex.practicum.filmorate.utill.UtilReader;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.List;
 
 @Repository
+@Slf4j
 public class ReviewDbStorage implements ReviewStorage {
 
     private final JdbcTemplate jdbcTemplate;
 
-    // SQL запросы для отзывов (R)
     private static final String R_SQL_QUERY_DIR = "src/main/resources/sql/query/review/";
     private static final String R_INSERT_SQL_QUERY = UtilReader.readString(R_SQL_QUERY_DIR + "insert.sql");
     private static final String R_SELECT_SQL_QUERY = UtilReader.readString(R_SQL_QUERY_DIR + "select.sql");
@@ -30,12 +32,10 @@ public class ReviewDbStorage implements ReviewStorage {
     private static final String R_UPDATE_SQL_QUERY = UtilReader.readString(R_SQL_QUERY_DIR + "update.sql");
     private static final String R_DELETE_SQL_QUERY = UtilReader.readString(R_SQL_QUERY_DIR + "delete.sql");
 
-    // SQL запросы по лайкам и дизлайкам для отзывов (L)
     private static final String L_SQL_QUERY_DIR = "src/main/resources/sql/query/review/like/";
     private static final String L_INSERT_SQL_QUERY = UtilReader.readString(L_SQL_QUERY_DIR + "insert.sql");
     private static final String L_DELETE_SQL_QUERY = UtilReader.readString(L_SQL_QUERY_DIR + "delete.sql");
 
-    // SQL запросы по изменению рейтинга для отзывов (U)
     private static final String U_SQL_QUERY_DIR = "src/main/resources/sql/query/review/useful/";
     private static final String U_UPDATE_INCREASE_SQL_QUERY = UtilReader.readString(
             U_SQL_QUERY_DIR + "update_increase.sql");
@@ -47,12 +47,12 @@ public class ReviewDbStorage implements ReviewStorage {
         this.jdbcTemplate = jdbcTemplate;
     }
 
-    // Добавление нового отзыва
     @Override
     public Review createReview(Review review) {
+        log.info("Приступаю к созданию отзыва");
         KeyHolder keyHolder = new GeneratedKeyHolder();
         jdbcTemplate.update(connection -> {
-            PreparedStatement stmt = connection.prepareStatement(R_INSERT_SQL_QUERY, new String[]{"review_id"});
+            PreparedStatement stmt = connection.prepareStatement(R_INSERT_SQL_QUERY, Statement.RETURN_GENERATED_KEYS);
             stmt.setString(1, review.getContent());
             stmt.setBoolean(2, review.getIsPositive());
             stmt.setInt(3, review.getUserId());
@@ -60,17 +60,16 @@ public class ReviewDbStorage implements ReviewStorage {
             stmt.setInt(5, review.getUseful());
             return stmt;
         }, keyHolder);
-
-        return getReviewById((Integer) keyHolder.getKey());
+        Review reviewById = getReviewById((Integer) keyHolder.getKey());
+        log.info("Создал отзыв {}", reviewById);
+        return reviewById;
     }
 
-    // Получение определённого количество отзывов
     @Override
     public List<Review> getReview(Integer count) {
         return jdbcTemplate.query(R_SELECT_SQL_QUERY, ReviewDbStorage::makeReview, count);
     }
 
-    // Получение отзыва по идентификатору
     @Override
     public Review getReviewById(Integer reviewId) {
         List<Review> review = jdbcTemplate.query(R_SELECT_BY_REVIEW_ID_SQL_QUERY, ReviewDbStorage::makeReview, reviewId);
@@ -78,13 +77,11 @@ public class ReviewDbStorage implements ReviewStorage {
         return review.stream().findAny().orElse(null);
     }
 
-    // Получение определённое количество отзывов по идентификатору фильма
     @Override
     public List<Review> getReviewByFilmId(Integer filmId, Integer count) {
         return jdbcTemplate.query(R_SELECT_BY_FILM_ID_SQL_QUERY, ReviewDbStorage::makeReview, filmId, count);
     }
 
-    // Редактирование уже имеющегося отзыва
     @Override
     public Review updateReview(Review review) {
         jdbcTemplate.update(R_UPDATE_SQL_QUERY,
@@ -95,51 +92,49 @@ public class ReviewDbStorage implements ReviewStorage {
         return getReviewById(review.getReviewId());
     }
 
-    // Удаление уже имеющегося отзыва по идентификатору
     @Override
     public void deleteReviewById(Integer reviewId) {
         jdbcTemplate.update(R_DELETE_SQL_QUERY, reviewId);
     }
 
-    // Пользователь ставит лайк отзыву
     @Override
     public void likeReview(Integer reviewId, Integer userId) {
+        deleteDislikeReview(reviewId, userId);
         jdbcTemplate.update(L_INSERT_SQL_QUERY, reviewId, userId, true);
 
         jdbcTemplate.update(U_UPDATE_INCREASE_SQL_QUERY, reviewId);
     }
 
-    // Пользователь ставит дизлайк отзыву
     @Override
     public void dislikeReview(Integer reviewId, Integer userId) {
+        deleteLikeReview(reviewId, userId);
         jdbcTemplate.update(L_INSERT_SQL_QUERY, reviewId, userId, false);
 
         jdbcTemplate.update(U_UPDATE_DECREASE_SQL_QUERY, reviewId);
     }
 
-    // Пользователь удаляет лайк отзыву
     @Override
     public void deleteLikeReview(Integer reviewId, Integer userId) {
-        jdbcTemplate.update(L_DELETE_SQL_QUERY, reviewId, userId);
 
-        jdbcTemplate.update(U_UPDATE_DECREASE_SQL_QUERY, reviewId);
+        int update = jdbcTemplate.update(L_DELETE_SQL_QUERY, reviewId, userId);
+        if (update == 1) {
+            jdbcTemplate.update(U_UPDATE_DECREASE_SQL_QUERY, reviewId);
+        }
     }
 
-    // Пользователь удаляет дизлайк отзыву
     @Override
     public void deleteDislikeReview(Integer reviewId, Integer userId) {
-        jdbcTemplate.update(L_DELETE_SQL_QUERY, reviewId, userId);
-
-        jdbcTemplate.update(U_UPDATE_INCREASE_SQL_QUERY, reviewId);
+        int update = jdbcTemplate.update(L_DELETE_SQL_QUERY, reviewId, userId);
+        if (update == 1) {
+            jdbcTemplate.update(U_UPDATE_INCREASE_SQL_QUERY, reviewId);
+        }
     }
 
-    // Проверка на существование отзыва
     @Override
     public boolean contains(Integer reviewId) {
         return getReviewById(reviewId) != null;
     }
 
-    // Создание отзыва (объекта Java)
     static Review makeReview(ResultSet resultSet, int rowNum) throws SQLException {
         return Review.builder()
                 .reviewId(resultSet.getInt("review_id"))
