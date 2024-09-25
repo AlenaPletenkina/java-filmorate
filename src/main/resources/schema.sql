@@ -53,4 +53,25 @@ CREATE TABLE IF NOT EXISTS USER_FRIENDS
     FOREIGN KEY (friend_id) REFERENCES USERS (user_id),
     PRIMARY KEY (user_id, friend_id)
 );
+CREATE TABLE IF NOT EXISTS REVIEWS
+(
+    review_id   INT PRIMARY KEY AUTO_INCREMENT,
+    content     VARCHAR,
+    is_positive BOOLEAN, -- если false то отрицательный, если true то положительный
+    user_id     INT NOT NULL ,
+    film_id     INT NOT NULL ,
+    useful      INT NOT NULL DEFAULT 0,
+    FOREIGN KEY (user_id) REFERENCES USERS (user_id) ON DELETE CASCADE,
+    FOREIGN KEY (film_id) REFERENCES FILM (film_id) ON DELETE CASCADE
+);
+
+CREATE TABLE IF NOT EXISTS REVIEWS_LIKES
+(
+    review_id   INT,
+    user_id     INT,
+    is_like     BOOLEAN, -- если false то дизлайк, если true то лайк
+    PRIMARY KEY (review_id, user_id),
+    FOREIGN KEY (review_id) REFERENCES REVIEWS (review_id) ON DELETE CASCADE,
+    FOREIGN KEY (user_id) REFERENCES USERS (user_id) ON DELETE CASCADE
+);
 
