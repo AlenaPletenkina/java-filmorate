@@ -1,5 +1,7 @@
 package ru.yandex.practicum.filmorate.controller;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -13,16 +15,24 @@ import java.util.List;
 public class UserController {
     private final String path = "/users";
     private final UserService userService;
+    private final ObjectMapper objectMapper;
 
     @Autowired
-    public UserController(UserService userService) {
+    public UserController(UserService userService, ObjectMapper objectMapper) {
         this.userService = userService;
+        this.objectMapper = objectMapper;
     }
 
     @PostMapping(path)
     public User createUser(@RequestBody User user) {
         log.info("Получил запрос на создание пользователя {}", user);
-        return userService.createUser(user);
+        User createdUser = userService.createUser(user);
+        try {
+            log.info("Пользователь успешно создан, response:{}", objectMapper.writeValueAsString(createdUser));
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e);
+        }
+        return createdUser;
     }
 
     @PutMapping(path)

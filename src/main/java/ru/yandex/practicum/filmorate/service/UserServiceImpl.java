@@ -109,5 +109,6 @@ public class UserServiceImpl implements UserService {
             log.warn("Вместо пустого имени присваивается логин");
             user.setName(user.getLogin());
         }
+        log.info("Валидация пользователя прошла успешно");
     }
 }

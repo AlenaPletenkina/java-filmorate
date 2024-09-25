@@ -69,4 +69,8 @@ public class FilmDbStorage implements FilmStorage {
     @Override
     public void deleteFilm(Film film) {
     }
+
+    public boolean contains(Integer filmId) {
+        return getFilm(filmId) != null;
+    }
 }
