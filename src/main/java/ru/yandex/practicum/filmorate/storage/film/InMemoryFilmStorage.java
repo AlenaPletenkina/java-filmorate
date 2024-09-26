@@ -62,9 +62,8 @@ public class InMemoryFilmStorage implements FilmStorage {
 
     @Override
     public List<Integer> getFilmsUserById(Integer userId) {
-        // Here you can implement custom filtering logic based on the number of likes or other conditions
         return films.values().stream()
-                .filter(film -> film.getLikes() != null && film.getLikes() > 0) // Example: Filter films with more than 0 likes
+                .filter(film -> film.getLikes() != null && film.getLikes() > 0)
                 .map(Film::getId)
                 .collect(Collectors.toList());
     }

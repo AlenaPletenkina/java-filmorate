@@ -155,15 +155,12 @@ public class FilmServiceImpl implements FilmService {
             throw new NotFoundException("Фильм с id " + id + " не найден");
         }
 
-        // Удаляем лайки, связанные с фильмом
         likeDbStorage.deleteLikesByFilmId(id);
         log.info("Лайки удалены для фильма с id: {}", id);
 
-        // Удаляем жанры фильма
         genreService.clearFilmGenres(id);
         log.info("Жанры удалены для фильма с id: {}", id);
 
-        // Удаляем сам фильм
         filmStorage.deleteFilmById(id);
         log.info("Фильм с id: {} успешно удалён", id);
     }
@@ -173,16 +170,14 @@ public class FilmServiceImpl implements FilmService {
         List<Integer> userFilms = filmStorage.getFilmsUserById(userId);
         List<Integer> friendFilms = filmStorage.getFilmsUserById(friendId);
 
-        // Находим пересечение списков фильмов пользователей
         Set<Integer> commonFilmIds = userFilms.stream()
                 .filter(friendFilms::contains)
                 .collect(Collectors.toSet());
 
-        // Получаем сами фильмы по ID и сортируем по числу лайков
         return commonFilmIds.stream()
                 .map(this::getFilm)
-                .filter(film -> nonNull(film.getLikes())) // Фильтруем фильмы с лайками
-                .sorted((f1, f2) -> f2.getLikes() - f1.getLikes()) // Сортируем по популярности
+                .filter(film -> nonNull(film.getLikes()))
+                .sorted((f1, f2) -> f2.getLikes() - f1.getLikes())
                 .collect(Collectors.toList());
     }
 
