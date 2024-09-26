@@ -148,6 +148,27 @@ public class FilmServiceImpl implements FilmService {
         }
     }
 
+    @Override
+    public void deleteFilmById(Integer id) {
+        Film film = filmStorage.getFilm(id);
+        if (film == null) {
+            throw new NotFoundException("Фильм с id " + id + " не найден");
+        }
+
+        // Удаляем лайки, связанные с фильмом
+        likeDbStorage.deleteLikesByFilmId(id);
+        log.info("Лайки удалены для фильма с id: {}", id);
+
+        // Удаляем жанры фильма
+        genreService.clearFilmGenres(id);
+        log.info("Жанры удалены для фильма с id: {}", id);
+
+        // Удаляем сам фильм
+        filmStorage.deleteFilmById(id);
+        log.info("Фильм с id: {} успешно удалён", id);
+    }
+
+
     private void validateUserId(Integer id) {
         userStorage.getUserById(id);
     }

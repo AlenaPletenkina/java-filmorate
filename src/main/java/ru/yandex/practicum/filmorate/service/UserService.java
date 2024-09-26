@@ -22,6 +22,8 @@ public interface UserService {
 
     public void deleteUser(User user);
 
+    void deleteUserById(Integer id);
+
     List<User> getAllUserFriends(Integer id);
 
     List<Film> getUsersRecommendations(Integer id);

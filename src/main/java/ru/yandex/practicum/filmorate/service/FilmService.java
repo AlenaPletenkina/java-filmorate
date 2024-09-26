@@ -21,4 +21,5 @@ public interface FilmService {
 
     void deleteFilm(Film film);
 
+    void deleteFilmById(Integer id);
 }

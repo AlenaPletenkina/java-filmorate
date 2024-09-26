@@ -47,4 +47,10 @@ public class LikeDbStorage implements LikeStorage {
             return preparedStatement;
         }, keyHolder);
     }
+
+    @Override
+    public void deleteLikesByFilmId(Integer filmId) {
+        String sql = UtilReader.readString(SQL_QUERY_DIR + "deleteByFilmId.sql");
+        jdbcTemplate.update(sql, filmId);
+    }
 }

@@ -57,6 +57,14 @@ public class InMemoryUserStorage implements UserStorage {
         users.remove(user.getId());
     }
 
+    @Override
+    public void deleteUserById(Integer id) {
+        if (!users.containsKey(id)) {
+            throw new ValidationException("Пользователь с id " + id + " не существует");
+        }
+        users.remove(id);
+    }
+
     private void update(User user, User userToUpdate) {
         userToUpdate.setBirthday(user.getBirthday());
         userToUpdate.setName(user.getName());

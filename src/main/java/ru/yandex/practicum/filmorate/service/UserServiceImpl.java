@@ -100,6 +100,18 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public void deleteUserById(Integer id) {
+        List<User> friends = friendStorage.getAllUserFriends(id);
+
+        for (User friend : friends) {
+            friendStorage.deleteFriend(id, friend.getId());
+            friendStorage.deleteFriend(friend.getId(), id);
+        }
+
+        userStorage.deleteUserById(id);
+        log.info("Пользователь успешно удалён");
+    }
+
     public List<Film> getUsersRecommendations(Integer id) {
         List<Integer> recommendUserFilms = filmStorage.getUsersRecommendations(id);
         log.info("Нашел список фильмов для рекомендации");
