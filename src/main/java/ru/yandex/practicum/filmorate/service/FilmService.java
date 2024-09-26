@@ -22,4 +22,7 @@ public interface FilmService {
     void deleteFilm(Film film);
 
     void deleteFilmById(Integer id);
+
+    List<Film> getCommonFilms(Integer userId, Integer friendId);
+
 }

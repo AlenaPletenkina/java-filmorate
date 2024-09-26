@@ -10,6 +10,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import static java.util.Objects.isNull;
 
@@ -58,6 +59,17 @@ public class InMemoryFilmStorage implements FilmStorage {
         }
         films.remove(film.getId());
     }
+
+    @Override
+    public List<Integer> getFilmsUserById(Integer userId) {
+        // Here you can implement custom filtering logic based on the number of likes or other conditions
+        return films.values().stream()
+                .filter(film -> film.getLikes() != null && film.getLikes() > 0) // Example: Filter films with more than 0 likes
+                .map(Film::getId)
+                .collect(Collectors.toList());
+    }
+
+
 
     private void update(Film film, Film filmToUpdate) {
         filmToUpdate.setName(film.getName());

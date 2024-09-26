@@ -16,4 +16,6 @@ public interface FilmStorage {
     void deleteFilm(Film film);
 
     void deleteFilmById(Integer id);
+
+    List<Integer> getFilmsUserById(Integer userId);
 }

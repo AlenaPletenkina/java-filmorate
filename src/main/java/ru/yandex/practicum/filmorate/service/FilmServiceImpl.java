@@ -168,6 +168,23 @@ public class FilmServiceImpl implements FilmService {
         log.info("Фильм с id: {} успешно удалён", id);
     }
 
+    @Override
+    public List<Film> getCommonFilms(Integer userId, Integer friendId) {
+        List<Integer> userFilms = filmStorage.getFilmsUserById(userId);
+        List<Integer> friendFilms = filmStorage.getFilmsUserById(friendId);
+
+        // Находим пересечение списков фильмов пользователей
+        Set<Integer> commonFilmIds = userFilms.stream()
+                .filter(friendFilms::contains)
+                .collect(Collectors.toSet());
+
+        // Получаем сами фильмы по ID и сортируем по числу лайков
+        return commonFilmIds.stream()
+                .map(filmStorage::getFilm) // Получаем фильм по его id
+                .filter(film -> nonNull(film.getLikes())) // Фильтруем фильмы с лайками
+                .sorted((f1, f2) -> f2.getLikes() - f1.getLikes()) // Сортируем по популярности
+                .collect(Collectors.toList());
+    }
 
     private void validateUserId(Integer id) {
         userStorage.getUserById(id);
