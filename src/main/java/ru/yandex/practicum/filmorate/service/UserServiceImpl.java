@@ -111,6 +111,7 @@ public class UserServiceImpl implements UserService {
         userStorage.deleteUserById(id);
         log.info("Пользователь успешно удалён");
     }
+    
     public List<Film> getUsersRecommendations(Integer id) {
         List<Integer> recommendUserFilms = filmStorage.getUsersRecommendations(id);
         log.info("Нашел список фильмов для рекомендации");
@@ -124,6 +125,7 @@ public class UserServiceImpl implements UserService {
         }
         return recommendFilms;
     }
+    
     private void validate(User user) {
         if (isNull(user.getEmail()) || user.getEmail().isEmpty() || !user.getEmail().contains("@")) {
             log.error("Email пуст, либо не содержит знак @ {}", user.getEmail());
