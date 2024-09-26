@@ -61,7 +61,7 @@ public class FriendDbStorage implements FriendStorage {
 
     @Override
     public void deleteAllFriendsForUser(Integer userId) {
-        String sql =UtilReader.readString(SQL_QUERY_DIR + "deleteAllFriends.sql");
+        String sql = UtilReader.readString(SQL_QUERY_DIR + "deleteAllFriends.sql");
         jdbcTemplate.update(sql, userId, userId);
     }
 
