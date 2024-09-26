@@ -26,6 +26,10 @@ public class FilmDbStorage implements FilmStorage {
     private static final String SELECT_BY_ID_SQL_QUERY = UtilReader.readString(SQL_QUERY_DIR + "select_by_id.sql");
     private static final String INSERT_SQL_QUERY = UtilReader.readString(SQL_QUERY_DIR + "insert.sql");
     private static final String UPDATE_SQL_QUERY = UtilReader.readString(SQL_QUERY_DIR + "update.sql");
+    private static final String SELECT_FAVORITE_FILMS_USER_ID_SQL_QUERY = UtilReader.readString(SQL_QUERY_DIR +
+             "like/select_favorite_films_user_by_id.sql");
+    private static final String SELECT_RECOMMENDATIONS_FILMS_ID_SQL_QUERY = UtilReader.readString(SQL_QUERY_DIR +
+            "like/select_recommendations_films_id.sql");
 
     @Override
     public Film addFilm(Film object) {
@@ -72,5 +76,13 @@ public class FilmDbStorage implements FilmStorage {
 
     public boolean contains(Integer filmId) {
         return getFilm(filmId) != null;
+    }
+
+    public List<Integer> getUsersRecommendations(Integer id) {
+        return jdbcTemplate.queryForList(SELECT_RECOMMENDATIONS_FILMS_ID_SQL_QUERY, Integer.class, id, id);
+    }
+
+    public List<Integer> getFilmsUserById(Integer id) {
+        return jdbcTemplate.queryForList(SELECT_FAVORITE_FILMS_USER_ID_SQL_QUERY, Integer.class, id);
     }
 }

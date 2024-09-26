@@ -5,12 +5,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.dao.friend.FriendStorage;
+import ru.yandex.practicum.filmorate.dao.impl.FilmDbStorage;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
+import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.storage.user.UserStorage;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 
 import static java.util.Objects.isNull;
@@ -21,12 +24,16 @@ public class UserServiceImpl implements UserService {
 
     private final UserStorage userStorage;
     private final FriendStorage friendStorage;
+    private final FilmDbStorage filmStorage;
 
 
     @Autowired
-    public UserServiceImpl(@Qualifier("H2UserDb") UserStorage userStorage, FriendStorage friendStorage) {
+    public UserServiceImpl(@Qualifier("H2UserDb") UserStorage userStorage, FriendStorage friendStorage,
+                           @Qualifier("H2FilmDb") FilmDbStorage filmStorage) {
         this.userStorage = userStorage;
         this.friendStorage = friendStorage;
+        this.filmStorage = filmStorage;
+
     }
 
     @Override
@@ -90,6 +97,21 @@ public class UserServiceImpl implements UserService {
     public List<User> getAllUserFriends(Integer id) {
         getUserById(id);
         return friendStorage.getAllUserFriends(id);
+    }
+
+    @Override
+    public List<Film> getUsersRecommendations(Integer id) {
+        List<Integer> recommendUserFilms = filmStorage.getUsersRecommendations(id);
+        log.info("Нашел список фильмов для рекомендации");
+        List<Integer> userFilms = filmStorage.getFilmsUserById(id);
+        log.info("Получил список фильмов пользователя для рекомендации {}", id);
+        recommendUserFilms.removeAll(userFilms);
+        List<Film> recommendFilms = new ArrayList<>();
+
+        for (Integer indexFilm : recommendUserFilms) {
+            recommendFilms.add(filmStorage.getFilm(indexFilm));
+        }
+        return recommendFilms;
     }
 
     private void validate(User user) {
