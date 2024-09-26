@@ -66,6 +66,14 @@ public class InMemoryFilmStorage implements FilmStorage {
         filmToUpdate.setReleaseDate(film.getReleaseDate());
     }
 
+    @Override
+    public void deleteFilmById(Integer id) {
+        if (!films.containsKey(id)) {
+            throw new ValidationException("Фильм с id " + id + " не существует");
+        }
+        films.remove(id);
+    }
+
     private int generateId() {
         return count++;
     }

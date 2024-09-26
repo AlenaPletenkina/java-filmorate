@@ -70,6 +70,12 @@ public class FilmDbStorage implements FilmStorage {
     public void deleteFilm(Film film) {
     }
 
+    @Override
+    public void deleteFilmById(Integer id) {
+        String deleteSql = UtilReader.readString(SQL_QUERY_DIR + "delete_by_id.sql");
+        jdbcTemplate.update(deleteSql, id);
+    }
+
     public boolean contains(Integer filmId) {
         return getFilm(filmId) != null;
     }

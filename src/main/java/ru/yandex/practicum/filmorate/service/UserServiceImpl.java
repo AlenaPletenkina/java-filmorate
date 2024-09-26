@@ -92,6 +92,15 @@ public class UserServiceImpl implements UserService {
         return friendStorage.getAllUserFriends(id);
     }
 
+    @Override
+    public void deleteUserById(Integer id) {
+        User user = userStorage.getUserById(id);
+        if (user == null) {
+            throw new NotFoundException("Пользователь с id " + id + " не найден");
+        }
+        userStorage.deleteUser(user);
+    }
+
     private void validate(User user) {
         if (isNull(user.getEmail()) || user.getEmail().isEmpty() || !user.getEmail().contains("@")) {
             log.error("Email пуст, либо не содержит знак @ {}", user.getEmail());

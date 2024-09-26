@@ -148,6 +148,15 @@ public class FilmServiceImpl implements FilmService {
         }
     }
 
+    @Override
+    public void deleteFilmById(Integer id) {
+        Film film = filmStorage.getFilm(id);
+        if (film == null) {
+            throw new NotFoundException("Фильм с id " + id + " не найден");
+        }
+        filmStorage.deleteFilm(film);
+    }
+
     private void validateUserId(Integer id) {
         userStorage.getUserById(id);
     }
