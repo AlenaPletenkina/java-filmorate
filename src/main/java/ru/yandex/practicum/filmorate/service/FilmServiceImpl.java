@@ -56,11 +56,16 @@ public class FilmServiceImpl implements FilmService {
 
     @Override
     public List<Film> getPopularFilms(Integer count) {
-        return filmStorage.getAllFilms().stream()
+        List<Film> films = filmStorage.getAllFilms().stream()
                 .filter(f -> nonNull(f.getLikes()))
                 .sorted((f1, f2) -> f2.getLikes() - f1.getLikes())
-                .limit(count)
                 .collect(Collectors.toList());
+
+        if (count != null) {
+            return films.stream().limit(count).collect(Collectors.toList());
+        } else {
+            return films;
+        }
     }
 
     @Override
@@ -166,8 +171,8 @@ public class FilmServiceImpl implements FilmService {
     }
 
     @Override
-    public List<Film> getTopFilmsWithFilters(Integer limit, Integer genreId, Integer year) {
-        return filmStorage.getTopFilmsWithFilters(limit, genreId, year);
+    public List<Film> getTopFilmsWithFilters(Integer genreId, Integer year) {
+        return filmStorage.getTopFilmsWithFilters(genreId, year);
     }
 
     private void validateUserId(Integer id) {

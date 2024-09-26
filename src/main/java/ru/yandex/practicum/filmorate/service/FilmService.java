@@ -23,5 +23,5 @@ public interface FilmService {
 
     void deleteFilmById(Integer id);
 
-    List<Film> getTopFilmsWithFilters(Integer limit, Integer genreId, Integer year);
+    List<Film> getTopFilmsWithFilters(Integer genreId, Integer year);
 }

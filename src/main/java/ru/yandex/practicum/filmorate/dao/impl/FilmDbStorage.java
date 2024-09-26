@@ -32,7 +32,7 @@ public class FilmDbStorage implements FilmStorage {
             "like/select_recommendations_films_id.sql");
 
     private static final String SELECT_TOP_FILMS_WITH_FILTERS = UtilReader.readString(SQL_QUERY_DIR +
-            "getFilmsWithFilters.sql");
+            "get_films_with_filters.sql");
 
     @Override
     public Film addFilm(Film object) {
@@ -96,9 +96,9 @@ public class FilmDbStorage implements FilmStorage {
     }
 
     @Override
-    public List<Film> getTopFilmsWithFilters(Integer limit, Integer genreId, Integer year) {
+    public List<Film> getTopFilmsWithFilters(Integer genreId, Integer year) {
         return jdbcTemplate.query(SELECT_TOP_FILMS_WITH_FILTERS,
-                new Object[] { genreId, year, limit },
+                new Object[] { genreId, year},
                 new FilmMapper());
     }
 }

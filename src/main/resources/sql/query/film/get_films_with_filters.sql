@@ -6,5 +6,4 @@ LEFT JOIN genres g ON fg.genre_id = g.genre_id
 WHERE (:genreId IS NULL OR g.genre_id = :genreId)
 AND (:year IS NULL OR EXTRACT(YEAR FROM f.release_date) = :year)
 GROUP BY f.film_id
-ORDER BY likes_count DESC
-LIMIT :limit;
+ORDER BY likes_count DESC;
