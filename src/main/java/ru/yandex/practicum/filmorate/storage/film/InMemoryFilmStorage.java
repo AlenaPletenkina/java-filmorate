@@ -10,6 +10,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import static java.util.Objects.isNull;
 
@@ -57,6 +58,23 @@ public class InMemoryFilmStorage implements FilmStorage {
             throw new ValidationException("Фильм " + film + " не может быть удален, так как не существует ");
         }
         films.remove(film.getId());
+    }
+
+    @Override
+    public List<Film> searchFilms(String query, String by) {
+        String lowerCaseQuery = query.toLowerCase();
+        switch (by.toLowerCase()) {
+            case "name":
+                return films.values().stream()
+                        .filter(film -> film.getName().toLowerCase().contains(lowerCaseQuery))
+                        .collect(Collectors.toList());
+            case "director":
+                return films.values().stream()
+                        .filter(film -> film.getDirector() != null && film.getDirector().toLowerCase().contains(lowerCaseQuery))
+                        .collect(Collectors.toList());
+            default:
+                return List.of();
+        }
     }
 
     private void update(Film film, Film filmToUpdate) {

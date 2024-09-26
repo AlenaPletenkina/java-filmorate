@@ -14,9 +14,7 @@ import ru.yandex.practicum.filmorate.storage.film.FilmStorage;
 import ru.yandex.practicum.filmorate.storage.user.UserStorage;
 
 import java.time.LocalDate;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static java.util.Objects.isNull;
@@ -84,6 +82,36 @@ public class FilmServiceImpl implements FilmService {
             throw new ValidationException(ex.getMessage());
         }
     }
+
+    @Override
+    public List<Film> searchFilms(String query, String by) {
+        List<Film> films = filmStorage.getAllFilms();
+        List<Film> result = new ArrayList<>();
+        if (query == null || query.isBlank()) {
+            return result;
+        }
+
+        Set<String> searchFields = new HashSet<>(Arrays.asList(by.split(",")));
+
+        for (Film film : films) {
+            boolean matches = false;
+            if (searchFields.contains("title") && film.getName().toLowerCase().contains(query.toLowerCase())) {
+                matches = true;
+            }
+            if (searchFields.contains("director") && film.getDirector().toLowerCase().contains(query.toLowerCase())) {
+                matches = true;
+            }
+            if (matches) {
+                result.add(film);
+            }
+        }
+
+        return result.stream()
+                .sorted(Comparator.comparingInt(Film::getLikes).reversed()) // Сортировка по популярности
+                .collect(Collectors.toList());
+    }
+
+
 
     @Override
     public Film updateFilm(Film film) {

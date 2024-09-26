@@ -21,4 +21,6 @@ public interface FilmService {
 
     void deleteFilm(Film film);
 
+    List<Film> searchFilms(String query, String by);
+
 }

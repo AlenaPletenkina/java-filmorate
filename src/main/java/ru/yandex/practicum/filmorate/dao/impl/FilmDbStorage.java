@@ -39,6 +39,7 @@ public class FilmDbStorage implements FilmStorage {
             preparedStatement.setDate(3, Date.valueOf(object.getReleaseDate()));
             preparedStatement.setInt(4, object.getDuration());
             preparedStatement.setInt(5, object.getMpa().getId());
+            preparedStatement.setString(6, object.getDirector());
             return preparedStatement;
         }, keyHolder);
         return getFilm(keyHolder.getKey().intValue());
@@ -52,6 +53,7 @@ public class FilmDbStorage implements FilmStorage {
                 Date.valueOf(object.getReleaseDate()),
                 object.getDuration(),
                 object.getMpa().getId(),
+                object.getDirector(),
                 object.getId());
         return getFilm(object.getId());
     }
@@ -69,4 +71,25 @@ public class FilmDbStorage implements FilmStorage {
     @Override
     public void deleteFilm(Film film) {
     }
+
+    @Override
+    public List<Film> searchFilms(String query, String by) {
+        String sql = "SELECT * FROM films WHERE ";
+        boolean isTitleSearch = by.contains("title");
+        boolean isDirectorSearch = by.contains("director");
+
+        if (isTitleSearch && isDirectorSearch) {
+            sql += "name ILIKE ? OR director ILIKE ?";
+            return jdbcTemplate.query(sql, new FilmMapper(), "%" + query + "%", "%" + query + "%");
+        } else if (isTitleSearch) {
+            sql += "name ILIKE ?";
+            return jdbcTemplate.query(sql, new FilmMapper(), "%" + query + "%");
+        } else if (isDirectorSearch) {
+            sql += "director ILIKE ?";
+            return jdbcTemplate.query(sql, new FilmMapper(), "%" + query + "%");
+        } else {
+            return List.of(); // Если ни одно из условий не выполнено
+        }
+    }
+
 }

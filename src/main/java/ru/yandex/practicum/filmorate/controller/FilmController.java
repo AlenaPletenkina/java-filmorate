@@ -70,4 +70,12 @@ public class FilmController {
         log.info("Получил запрос на получение фильма по его id = {}", filmId);
         return filmService.getFilm(filmId);
     }
+
+    @GetMapping(path + "/search")
+    public List<Film> searchFilms(@RequestParam String query, @RequestParam String by) {
+        log.info("Получил запрос на поиск фильмов по параметрам: query = {}, by = {}", query, by);
+        return filmService.searchFilms(query, by);
+    }
+
+
 }
