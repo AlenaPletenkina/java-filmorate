@@ -76,4 +76,12 @@ public class FilmController {
         log.info("Получил запрос на удаление фильма с id {}", id);
         filmService.deleteFilmById(id);
     }
+
+    @GetMapping("/popular")
+    public List<Film> getTopFilmsWithFilters(
+            @RequestParam(required = false) Integer genreId,
+            @RequestParam(required = false) Integer year,
+            @RequestParam(defaultValue = "10") Integer limit) {
+        return filmService.getTopFilmsWithFilters(limit, genreId, year);
+    }
 }
