@@ -175,6 +175,21 @@ public class FilmServiceImpl implements FilmService {
         return filmStorage.getTopFilmsWithFilters(genreId, year);
     }
 
+    public List<Film> getCommonFilms(Integer userId, Integer friendId) {
+        List<Integer> userFilms = filmStorage.getFilmsUserById(userId);
+        List<Integer> friendFilms = filmStorage.getFilmsUserById(friendId);
+
+        Set<Integer> commonFilmIds = userFilms.stream()
+                .filter(friendFilms::contains)
+                .collect(Collectors.toSet());
+
+        return commonFilmIds.stream()
+                .map(this::getFilm)
+                .filter(film -> nonNull(film.getLikes()))
+                .sorted((f1, f2) -> f2.getLikes() - f1.getLikes())
+                .collect(Collectors.toList());
+    }
+
     private void validateUserId(Integer id) {
         userStorage.getUserById(id);
     }
