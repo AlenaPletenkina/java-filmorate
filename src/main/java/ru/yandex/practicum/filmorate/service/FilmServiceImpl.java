@@ -180,7 +180,7 @@ public class FilmServiceImpl implements FilmService {
 
         // Получаем сами фильмы по ID и сортируем по числу лайков
         return commonFilmIds.stream()
-                .map(filmStorage::getFilm) // Получаем фильм по его id
+                .map(id->this.getFilm(id))
                 .filter(film -> nonNull(film.getLikes())) // Фильтруем фильмы с лайками
                 .sorted((f1, f2) -> f2.getLikes() - f1.getLikes()) // Сортируем по популярности
                 .collect(Collectors.toList());
