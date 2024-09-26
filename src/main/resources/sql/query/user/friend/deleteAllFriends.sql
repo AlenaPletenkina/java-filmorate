@@ -1,0 +1,1 @@
+DELETE FROM user_friends WHERE user_id = ? OR friend_id = ?;

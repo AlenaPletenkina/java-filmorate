@@ -1,1 +1,1 @@
-DELETE FROM films WHERE id = ?;
+DELETE FROM film WHERE film_id = ?;

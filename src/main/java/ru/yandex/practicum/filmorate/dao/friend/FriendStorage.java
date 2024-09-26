@@ -14,4 +14,6 @@ public interface FriendStorage {
     List<User> getAllUserFriends(Integer userId);
 
     List<User> getMutualFriends(Integer userIdOne, Integer userIdTwo);
+
+    void deleteAllFriendsForUser(Integer userId);
 }
