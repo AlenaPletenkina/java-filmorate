@@ -23,6 +23,7 @@ public interface FilmService {
 
     void deleteFilmById(Integer id);
 
-    List<Film> getCommonFilms(Integer userId, Integer friendId);
+    List<Film> getTopFilmsWithFilters(Integer genreId, Integer year);
 
+    List<Film> getCommonFilms(Integer userId, Integer friendId);
 }

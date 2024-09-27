@@ -60,8 +60,8 @@ public class FilmController {
     }
 
     @GetMapping(path + "/popular")
-    public List<Film> getPopularFilms(@RequestParam(defaultValue = "10") Integer count) {
-        log.info("Получил запрос на получение популярных фильмов, в количестве = {}", count);
+    public List<Film> getPopularFilms(@RequestParam(required = false) Integer count) {
+        log.info("Получил запрос на получение популярных фильмов, количество = {}", count);
         return filmService.getPopularFilms(count);
     }
 
@@ -75,6 +75,13 @@ public class FilmController {
     public void deleteFilm(@PathVariable Integer id) {
         log.info("Получил запрос на удаление фильма с id {}", id);
         filmService.deleteFilmById(id);
+    }
+
+    @GetMapping("/popular")
+    public List<Film> getPopularFilmsWithFilters(
+            @RequestParam(required = false) Integer genreId,
+            @RequestParam(required = false) Integer year) {
+        return filmService.getTopFilmsWithFilters(genreId, year);
     }
 
     @GetMapping(path + "/common")
