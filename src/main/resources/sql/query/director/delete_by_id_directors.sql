@@ -1,0 +1,1 @@
+DELETE FROM DIRECTORS WHERE director_id = ?

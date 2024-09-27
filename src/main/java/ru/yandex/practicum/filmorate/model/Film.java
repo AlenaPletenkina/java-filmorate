@@ -20,4 +20,5 @@ public class Film {
     Integer likes;
     Rating mpa;
     List<Genre> genres;
+    List<Director> directors;
 }

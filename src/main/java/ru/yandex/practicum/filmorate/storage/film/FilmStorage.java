@@ -20,4 +20,8 @@ public interface FilmStorage {
     List<Film> getTopFilmsWithFilters(Integer genreId, Integer year);
 
     List<Integer> getFilmsUserById(Integer userId);
+
+    List<Film> getSortedDirectorsFilmsByYears(long id);
+
+    List<Film> getSortedDirectorsFilmsByLikes(long id);
 }

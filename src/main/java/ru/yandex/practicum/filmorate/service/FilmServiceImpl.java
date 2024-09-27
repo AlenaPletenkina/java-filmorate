@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.dao.like.LikeDbStorage;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
+import ru.yandex.practicum.filmorate.model.Director;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.Genre;
 import ru.yandex.practicum.filmorate.storage.film.FilmStorage;
@@ -30,16 +31,18 @@ public class FilmServiceImpl implements FilmService {
     private final UserStorage userStorage;
     private final LikeDbStorage likeDbStorage;
     private final GenreService genreService;
+    private final DirectorService directorService;
 
     @Autowired
     public FilmServiceImpl(@Qualifier("H2FilmDb") FilmStorage filmStorage,
                            ObjectMapper objectMapper, @Qualifier("H2UserDb") UserStorage userStorage,
-                           LikeDbStorage likeDbStorage, GenreService genreService) {
+                           LikeDbStorage likeDbStorage, GenreService genreService, DirectorService directorService) {
         this.filmStorage = filmStorage;
         this.objectMapper = objectMapper;
         this.userStorage = userStorage;
         this.likeDbStorage = likeDbStorage;
         this.genreService = genreService;
+        this.directorService = directorService;
     }
 
     @Override
@@ -83,6 +86,15 @@ public class FilmServiceImpl implements FilmService {
                 addFilm.setGenres(genreService.getFilmGenres(addFilm.getId()));
             }
 
+            List<Director> directors1 = film.getDirectors();
+            if (nonNull(directors1)) {
+                Set<Director> directors = new HashSet<>(directors1);
+                for (Director director : directors) {
+                    directorService.setDirector(addFilm.getId(), director.getId());
+                }
+                addFilm.setDirectors(directorService.getFilmDirectors(addFilm.getId()));
+            }
+
             log.info("Создание фильма прошло успешно {}", objectMapper.writeValueAsString(addFilm));
             return addFilm;
         } catch (Exception ex) {
@@ -103,6 +115,15 @@ public class FilmServiceImpl implements FilmService {
             for (Genre genre : genres) {
                 genreService.setGenre(film.getId(), genre.getId());
             }
+            updateFilm.setGenres(genreService.getFilmGenres(updateFilm.getId()));
+        }
+        directorService.clearFilmDirectors(film.getId());
+        List<Director> directors = film.getDirectors();
+        if (nonNull(directors)) {
+            for (Director director : directors) {
+                directorService.setDirector(film.getId(), director.getId());
+            }
+            updateFilm.setDirectors(directorService.getFilmDirectors(updateFilm.getId()));
         }
         return updateFilm;
     }
@@ -113,6 +134,8 @@ public class FilmServiceImpl implements FilmService {
         for (Film film : allFilms) {
             List<Genre> filmGenres = genreService.getFilmGenres(film.getId());
             film.setGenres(filmGenres);
+            List<Director> filmDirectors = directorService.getFilmDirectors(film.getId());
+            film.setDirectors(filmDirectors);
         }
         return allFilms;
     }
@@ -125,6 +148,8 @@ public class FilmServiceImpl implements FilmService {
         }
         List<Genre> filmGenres = genreService.getFilmGenres(id);
         film.setGenres(filmGenres);
+        List<Director> filmDirectors = directorService.getFilmDirectors(id);
+        film.setDirectors(filmDirectors);
         return film;
     }
 
@@ -192,5 +217,35 @@ public class FilmServiceImpl implements FilmService {
 
     private void validateUserId(Integer id) {
         userStorage.getUserById(id);
+    }
+
+    @Override
+    public List<Film> getSortedDirectorsFilms(Integer id, String sortBy) {
+        directorService.findDirectorById(id);
+        List<Film> sortFilms;
+
+        log.info("Проверяем способ сортировки");
+        switch (sortBy) {
+            case "year":
+                sortFilms = filmStorage.getSortedDirectorsFilmsByYears(id);
+                for (Film film : sortFilms) {
+                    List<Genre> filmGenres = genreService.getFilmGenres(film.getId());
+                    film.setGenres(filmGenres);
+                    List<Director> filmDirectors = directorService.getFilmDirectors(film.getId());
+                    film.setDirectors(filmDirectors);
+                }
+                return sortFilms;
+            case "likes":
+                sortFilms = filmStorage.getSortedDirectorsFilmsByLikes(id);
+                for (Film film : sortFilms) {
+                    List<Genre> filmGenres = genreService.getFilmGenres(film.getId());
+                    film.setGenres(filmGenres);
+                    List<Director> filmDirectors = directorService.getFilmDirectors(film.getId());
+                    film.setDirectors(filmDirectors);
+                }
+                return sortFilms;
+            default:
+                throw new ValidationException(String.format("Передан некорректный параметр сортировки: %s", sortBy));
+        }
     }
 }

@@ -26,4 +26,6 @@ public interface FilmService {
     List<Film> getTopFilmsWithFilters(Integer genreId, Integer year);
 
     List<Film> getCommonFilms(Integer userId, Integer friendId);
+
+    List<Film> getSortedDirectorsFilms(Integer id, String sortBy);
 }

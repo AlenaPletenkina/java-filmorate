@@ -108,6 +108,16 @@ public class InMemoryFilmStorage implements FilmStorage {
                 .toList();
     }
 
+    @Override
+    public List<Film> getSortedDirectorsFilmsByYears(long id) {
+        return List.of();
+    }
+
+    @Override
+    public List<Film> getSortedDirectorsFilmsByLikes(long id) {
+        return List.of();
+    }
+
     private int generateId() {
         return count++;
     }
