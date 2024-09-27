@@ -1,0 +1,4 @@
+SELECT *
+FROM FILM
+WHERE LOWER(film_name)
+LIKE ?

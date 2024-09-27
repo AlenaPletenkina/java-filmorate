@@ -37,6 +37,9 @@ public class FilmDbStorage implements FilmStorage {
     private static final String SELECT_TOP_FILMS_WITH_FILTERS = UtilReader.readString(SQL_QUERY_DIR +
             "get_films_with_filters.sql");
 
+    private static final String SEARCH_FILMS_BY_TITLE_SQL_QUERY = UtilReader.readString(SQL_QUERY_DIR + "search-films-by-title.sql");
+    private static final String SEARCH_FILMS_BY_DIRECTOR_SQL_QUERY = UtilReader.readString(SQL_QUERY_DIR + "search-films-by-director.sql");
+
     @Override
     public Film addFilm(Film object) {
         KeyHolder keyHolder = new GeneratedKeyHolder();
@@ -119,5 +122,15 @@ public class FilmDbStorage implements FilmStorage {
         List<Film> films = jdbcTemplate.query(DIRECTOR_ORDER_BY_LIKES_SQL_QUERY, new FilmMapper(), id);
 
         return films;
+    }
+
+    @Override
+    public List<Film> searchFilmsByTitle(String query) {
+        return jdbcTemplate.query(SEARCH_FILMS_BY_TITLE_SQL_QUERY, new FilmMapper(), "%" + query.toLowerCase() + "%");
+    }
+
+    @Override
+    public List<Film> searchFilmsByDirector(String query) {
+        return jdbcTemplate.query(SEARCH_FILMS_BY_DIRECTOR_SQL_QUERY, new FilmMapper(), "%" + query.toLowerCase() + "%");
     }
 }

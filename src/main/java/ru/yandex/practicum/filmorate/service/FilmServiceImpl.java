@@ -248,4 +248,27 @@ public class FilmServiceImpl implements FilmService {
                 throw new ValidationException(String.format("Передан некорректный параметр сортировки: %s", sortBy));
         }
     }
+
+    @Override
+    public List<Film> searchFilms(String query, String by) {
+        Set<Film> result = new HashSet<>();
+        String[] searchBy = by.split(",");
+
+        for (String searchField : searchBy) {
+            switch (searchField) {
+                case "title":
+                    result.addAll(filmStorage.searchFilmsByTitle(query));
+                    break;
+                case "director":
+                    result.addAll(filmStorage.searchFilmsByDirector(query));
+                    break;
+                default:
+                    throw new ValidationException("Некорректный параметр поиска: " + searchField);
+            }
+        }
+
+        return result.stream()
+                .sorted((f1, f2) -> f2.getLikes() - f1.getLikes())
+                .collect(Collectors.toList());
+    }
 }
