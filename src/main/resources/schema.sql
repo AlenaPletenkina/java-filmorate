@@ -75,3 +75,18 @@ CREATE TABLE IF NOT EXISTS REVIEWS_LIKES
     FOREIGN KEY (user_id) REFERENCES USERS (user_id) ON DELETE CASCADE
 );
 
+CREATE TABLE IF NOT EXISTS DIRECTORS
+(
+    director_id INT AUTO_INCREMENT,
+    name        VARCHAR(255) NOT NULL,
+    PRIMARY KEY (director_id)
+);
+
+CREATE TABLE IF NOT EXISTS FILM_DIRECTOR
+(
+    director_id INT,
+    film_id     INT,
+    PRIMARY KEY (director_id, film_id),
+    FOREIGN KEY (director_id) REFERENCES directors (director_id) ON DELETE CASCADE,
+    FOREIGN KEY (film_id) REFERENCES film (film_id) ON DELETE CASCADE
+);

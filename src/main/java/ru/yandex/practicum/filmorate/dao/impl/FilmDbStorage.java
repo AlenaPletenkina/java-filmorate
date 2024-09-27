@@ -30,7 +30,10 @@ public class FilmDbStorage implements FilmStorage {
              "like/select_favorite_films_user_by_id.sql");
     private static final String SELECT_RECOMMENDATIONS_FILMS_ID_SQL_QUERY = UtilReader.readString(SQL_QUERY_DIR +
             "like/select_recommendations_films_id.sql");
-
+    private static final String DIRECTOR_ORDER_BY_YEAR_SQL_QUERY = UtilReader.readString(SQL_QUERY_DIR +
+            "director/director_order_by_year.sql");
+    private static final String DIRECTOR_ORDER_BY_LIKES_SQL_QUERY = UtilReader.readString(SQL_QUERY_DIR +
+            "director/director_order_by_likes.sql");
     private static final String SELECT_TOP_FILMS_WITH_FILTERS = UtilReader.readString(SQL_QUERY_DIR +
             "get_films_with_filters.sql");
 
@@ -100,5 +103,21 @@ public class FilmDbStorage implements FilmStorage {
         return jdbcTemplate.query(SELECT_TOP_FILMS_WITH_FILTERS,
                 new Object[] { genreId, year},
                 new FilmMapper());
+    }
+
+    @Override
+    public List<Film> getSortedDirectorsFilmsByYears(long id) {
+
+        List<Film> films = jdbcTemplate.query(DIRECTOR_ORDER_BY_YEAR_SQL_QUERY, new FilmMapper(), id);
+
+        return films;
+    }
+
+    @Override
+    public List<Film> getSortedDirectorsFilmsByLikes(long id) {
+
+        List<Film> films = jdbcTemplate.query(DIRECTOR_ORDER_BY_LIKES_SQL_QUERY, new FilmMapper(), id);
+
+        return films;
     }
 }

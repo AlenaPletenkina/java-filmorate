@@ -34,6 +34,7 @@ class FilmDbStorageTest {
             220,
             0,
             new Rating(1, "G"),
+            null,
             null);
 
     @BeforeEach
@@ -59,6 +60,7 @@ class FilmDbStorageTest {
                 100,
                 1,
                 new Rating(3, "PG-13"),
+                null,
                 null);
         Assertions.assertEquals(film, filmStorage.getFilm(1));
     }

@@ -10,7 +10,6 @@ import ru.yandex.practicum.filmorate.service.ReviewService;
 
 import java.util.List;
 
-
 @RestController
 @Slf4j
 @RequestMapping("/reviews")
