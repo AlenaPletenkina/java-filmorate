@@ -287,7 +287,13 @@ public class FilmServiceImpl implements FilmService {
         }
 
         return result.stream()
-                .sorted((f1, f2) -> Integer.compare(f2.getLikes(), f1.getLikes()))
+                .sorted((f1, f2) -> {
+                    int likesComparison = Integer.compare(f2.getLikes(), f1.getLikes());
+                    if (likesComparison != 0) {
+                        return likesComparison;
+                    }
+                    return Long.compare(f1.getId(), f2.getId());
+                })
                 .collect(Collectors.toList());
     }
 }
