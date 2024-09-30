@@ -10,7 +10,6 @@ import ru.yandex.practicum.filmorate.model.Rating;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.LinkedHashSet;
-import java.util.Objects;
 import java.util.Set;
 
 @Service
@@ -30,7 +29,7 @@ public class FilmMapper implements RowMapper<Film> {
                 .releaseDate(rs.getDate("release_date").toLocalDate())
                 .duration(rs.getInt("duration"))
                 .mpa(mpa)
-                .likes(likes)
+                .likes(rs.getInt("rate"))
                 .genres(genres)
                 .directors(directors)
                 .build();

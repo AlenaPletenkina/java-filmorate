@@ -62,7 +62,7 @@ public class InMemoryFilmStorage implements FilmStorage {
     @Override
     public List<Integer> getFilmsUserById(Integer userId) {
         return films.values().stream()
-                .filter(film -> film.getLikes() != null && film.getLikes().contains(userId.longValue()))
+                .filter(film -> film.getLikes() != null && film.getLikes() > 0)
                 .map(Film::getId)
                 .collect(Collectors.toList());
     }
@@ -103,30 +103,21 @@ public class InMemoryFilmStorage implements FilmStorage {
                     }
                     return true;
                 })
-                .sorted((f1, f2) -> Integer.compare(
-                        (f2.getLikes() != null) ? f2.getLikes().size() : 0,
-                        (f1.getLikes() != null) ? f1.getLikes().size() : 0))
-                .collect(Collectors.toList());
+                .sorted((f1, f2) -> {
+                    return Integer.compare(f2.getLikes(), f1.getLikes());
+                })
+                .toList();
+    }
+
+
+    @Override
+    public List<Film> getSortedDirectorsFilmsByYears(long id) {
+        return List.of();
     }
 
     @Override
-    public List<Film> getSortedDirectorsFilmsByYears(long directorId) {
-        return films.values().stream()
-                .filter(film -> film.getDirectors().stream()
-                        .anyMatch(director -> director.getId() == directorId))
-                .sorted(Comparator.comparing(Film::getReleaseDate))
-                .collect(Collectors.toList());
-    }
-
-    @Override
-    public List<Film> getSortedDirectorsFilmsByLikes(long directorId) {
-        return films.values().stream()
-                .filter(film -> film.getDirectors().stream()
-                        .anyMatch(director -> director.getId() == directorId))
-                .sorted((f1, f2) -> Integer.compare(
-                        (f2.getLikes() != null) ? f2.getLikes().size() : 0,
-                        (f1.getLikes() != null) ? f1.getLikes().size() : 0))
-                .collect(Collectors.toList());
+    public List<Film> getSortedDirectorsFilmsByLikes(long id) {
+        return List.of();
     }
 
     @Override

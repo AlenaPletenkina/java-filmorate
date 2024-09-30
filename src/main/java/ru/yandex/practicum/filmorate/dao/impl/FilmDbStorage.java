@@ -104,7 +104,7 @@ public class FilmDbStorage implements FilmStorage {
     @Override
     public List<Film> getTopFilmsWithFilters(Integer genreId, Integer year) {
         return jdbcTemplate.query(SELECT_TOP_FILMS_WITH_FILTERS,
-                new Object[] { genreId, year},
+                new Object[]{genreId, year},
                 new FilmMapper());
     }
 

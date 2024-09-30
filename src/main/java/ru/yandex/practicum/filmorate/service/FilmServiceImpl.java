@@ -62,7 +62,7 @@ public class FilmServiceImpl implements FilmService {
     public List<Film> getPopularFilms(Integer count) {
         List<Film> films = filmStorage.getAllFilms().stream()
                 .filter(f -> nonNull(f.getLikes()))
-                .sorted((f1, f2) -> Integer.compare(f2.getLikes().size(), f1.getLikes().size()))
+                .sorted((f1, f2) -> f2.getLikes() - f1.getLikes())
                 .collect(Collectors.toList());
 
         if (count != null) {
@@ -213,23 +213,18 @@ public class FilmServiceImpl implements FilmService {
         return films;
     }
 
-    @Override
     public List<Film> getCommonFilms(Integer userId, Integer friendId) {
-        List<Long> userFilms = filmStorage.getFilmsUserById(userId).stream()
-                .map(Integer::longValue)
-                .collect(Collectors.toList());
-        List<Long> friendFilms = filmStorage.getFilmsUserById(friendId).stream()
-                .map(Integer::longValue)
-                .collect(Collectors.toList());
+        List<Integer> userFilms = filmStorage.getFilmsUserById(userId);
+        List<Integer> friendFilms = filmStorage.getFilmsUserById(friendId);
 
-        Set<Long> commonFilmIds = userFilms.stream()
+        Set<Integer> commonFilmIds = userFilms.stream()
                 .filter(friendFilms::contains)
                 .collect(Collectors.toSet());
 
         return commonFilmIds.stream()
-                .map(id -> getFilm(id.intValue()))
+                .map(this::getFilm)
                 .filter(film -> nonNull(film.getLikes()))
-                .sorted((f1, f2) -> Integer.compare(f2.getLikes().size(), f1.getLikes().size()))
+                .sorted((f1, f2) -> f2.getLikes() - f1.getLikes())
                 .collect(Collectors.toList());
     }
 
@@ -284,8 +279,15 @@ public class FilmServiceImpl implements FilmService {
             }
         }
 
+        for (Film film : result) {
+            List<Genre> filmGenres = genreService.getFilmGenres(film.getId());
+            film.setGenres(new LinkedHashSet<>(filmGenres));
+            List<Director> filmDirectors = directorService.getFilmDirectors(film.getId());
+            film.setDirectors(new LinkedHashSet<>(filmDirectors));
+        }
+
         return result.stream()
-                .sorted((f1, f2) -> Integer.compare(f2.getLikes().size(), f1.getLikes().size()))
+                .sorted((f1, f2) -> Integer.compare(f2.getLikes(), f1.getLikes()))
                 .collect(Collectors.toList());
     }
 }

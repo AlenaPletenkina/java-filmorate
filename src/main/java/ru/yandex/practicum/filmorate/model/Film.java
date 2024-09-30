@@ -17,7 +17,7 @@ public class Film {
     String description;
     LocalDate releaseDate;
     Integer duration;
-    Set<Long> likes = new LinkedHashSet<>();
+    Integer likes;
     Rating mpa;
     Set<Genre> genres = new LinkedHashSet<>();
     Set<Director> directors = new LinkedHashSet<>();
