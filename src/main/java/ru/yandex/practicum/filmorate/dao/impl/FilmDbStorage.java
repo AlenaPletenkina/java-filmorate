@@ -27,7 +27,7 @@ public class FilmDbStorage implements FilmStorage {
     private static final String INSERT_SQL_QUERY = UtilReader.readString(SQL_QUERY_DIR + "insert.sql");
     private static final String UPDATE_SQL_QUERY = UtilReader.readString(SQL_QUERY_DIR + "update.sql");
     private static final String SELECT_FAVORITE_FILMS_USER_ID_SQL_QUERY = UtilReader.readString(SQL_QUERY_DIR +
-             "like/select_favorite_films_user_by_id.sql");
+            "like/select_favorite_films_user_by_id.sql");
     private static final String SELECT_RECOMMENDATIONS_FILMS_ID_SQL_QUERY = UtilReader.readString(SQL_QUERY_DIR +
             "like/select_recommendations_films_id.sql");
     private static final String DIRECTOR_ORDER_BY_YEAR_SQL_QUERY = UtilReader.readString(SQL_QUERY_DIR +
