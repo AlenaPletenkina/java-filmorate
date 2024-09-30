@@ -6,4 +6,4 @@ LEFT JOIN FILM_DIRECTOR fd ON f.film_id = fd.film_id
 LEFT JOIN DIRECTORS d ON fd.director_id = d.director_id
 WHERE LOWER(d.name) LIKE LOWER(?)
 GROUP BY f.film_id
-ORDER BY rate DESC;
+ORDER BY rate DESC, d.name ASC;

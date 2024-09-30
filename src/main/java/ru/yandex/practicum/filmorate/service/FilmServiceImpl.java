@@ -268,11 +268,11 @@ public class FilmServiceImpl implements FilmService {
 
         for (String searchField : searchBy) {
             switch (searchField.trim()) {
-                case "director":
-                    result.addAll(filmStorage.searchFilmsByDirector(query));
-                    break;
                 case "title":
                     result.addAll(filmStorage.searchFilmsByTitle(query));
+                    break;
+                case "director":
+                    result.addAll(filmStorage.searchFilmsByDirector(query));
                     break;
                 default:
                     throw new ValidationException("Некорректный параметр поиска: " + searchField);
