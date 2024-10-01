@@ -8,8 +8,6 @@ import org.springframework.stereotype.Repository;
 import ru.yandex.practicum.filmorate.utill.UtilReader;
 
 import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.sql.Statement;
 
 @Repository
@@ -58,7 +56,4 @@ public class LikeDbStorage implements LikeStorage {
         jdbcTemplate.update(sql, filmId);
     }
 
-    private static Integer makeId(ResultSet rs) throws SQLException {
-        return rs.getInt("USER_ID");
-    }
 }

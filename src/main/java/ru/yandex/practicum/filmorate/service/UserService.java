@@ -24,7 +24,8 @@ public interface UserService {
     public void deleteUser(User user);
 
     void deleteUserById(Integer id);
-    public List<Event> getUserFeed(Integer id);
+
+    List<Event> getUserFeed(Integer id);
 
     List<User> getAllUserFriends(Integer id);
 

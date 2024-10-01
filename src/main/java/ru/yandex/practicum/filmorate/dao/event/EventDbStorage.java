@@ -9,7 +9,6 @@ import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.model.Event;
 import ru.yandex.practicum.filmorate.mapper.EventMapper;
-import ru.yandex.practicum.filmorate.dao.event.EventStorage;
 
 import java.util.List;
 import java.util.Map;
@@ -38,7 +37,7 @@ public class EventDbStorage implements EventStorage {
     @Override
     public List<Event> getEventsByUserId(Integer userId) {
         String sql = "SELECT * FROM EVENTS WHERE user_id = :userId ";
-        List<Event> events =  jdbcOperations.query(sql, Map.of("userId", userId), new EventMapper());
+        List<Event> events = jdbcOperations.query(sql, Map.of("userId", userId), new EventMapper());
         log.info("Найден список событий, состоящий из {} элементов", events.size());
         return events;
     }
