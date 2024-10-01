@@ -19,6 +19,6 @@ public class Film {
     Integer duration;
     Integer likes;
     Rating mpa;
-    List<Genre> genres;
-    List<Director> directors;
+    Set<Genre> genres = new LinkedHashSet<>();
+    Set<Director> directors = new LinkedHashSet<>();
 }
