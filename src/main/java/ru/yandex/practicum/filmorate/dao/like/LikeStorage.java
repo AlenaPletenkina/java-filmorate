@@ -6,4 +6,5 @@ public interface LikeStorage {
     void deleteLike(Integer filmId, Integer userId);
 
     void deleteLikesByFilmId(Integer filmId);
+
 }
