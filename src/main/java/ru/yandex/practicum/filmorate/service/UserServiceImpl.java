@@ -4,13 +4,14 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
+import ru.yandex.practicum.filmorate.dao.event.EventStorage;
 import ru.yandex.practicum.filmorate.dao.friend.FriendStorage;
 import ru.yandex.practicum.filmorate.dao.impl.FilmDbStorage;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
-import ru.yandex.practicum.filmorate.model.Film;
-import ru.yandex.practicum.filmorate.model.User;
+import ru.yandex.practicum.filmorate.model.*;
 import ru.yandex.practicum.filmorate.storage.user.UserStorage;
+
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -25,21 +26,24 @@ public class UserServiceImpl implements UserService {
     private final UserStorage userStorage;
     private final FriendStorage friendStorage;
     private final FilmDbStorage filmStorage;
+    private final EventStorage eventStorage;
 
 
     @Autowired
-    public UserServiceImpl(@Qualifier("H2UserDb") UserStorage userStorage, FriendStorage friendStorage,
+    public UserServiceImpl(@Qualifier("H2UserDb") UserStorage userStorage, FriendStorage friendStorage, EventStorage eventStorage,
                            @Qualifier("H2FilmDb") FilmDbStorage filmStorage) {
         this.userStorage = userStorage;
         this.friendStorage = friendStorage;
         this.filmStorage = filmStorage;
-
+        this.eventStorage = eventStorage;
     }
 
     @Override
     public void addFriend(Integer userId, Integer userFriendId) {
         try {
             friendStorage.addFriend(userId, userFriendId);
+            log.info("Добавляем пользователю {} событие {} - {} с другом {}", userId, EventType.FRIEND, Operation.ADD, userFriendId);
+            eventStorage.add(new Event(userId, EventType.FRIEND, userFriendId, Operation.ADD));
         } catch (Exception ex) {
             throw new NotFoundException("Ошибка поиска пользователя");
         }
@@ -49,9 +53,12 @@ public class UserServiceImpl implements UserService {
     public void deleteFriend(Integer userId, Integer userFriendId) {
         getUserById(userId);
         getUserById(userFriendId);
-
+        log.info("Добавляем пользователю {} событие {} - {} с другом {}", userId, EventType.FRIEND, Operation.REMOVE, userFriendId);
+        eventStorage.add(new Event(userId, EventType.FRIEND, userFriendId, Operation.REMOVE));
         friendStorage.deleteFriend(userId, userFriendId);
+
     }
+
 
     @Override
     public List<User> getMutualFriends(Integer userId, Integer userFriendId) {
@@ -111,6 +118,15 @@ public class UserServiceImpl implements UserService {
         userStorage.deleteUserById(id);
         log.info("Пользователь успешно удалён");
     }
+
+    public List<Event> getUserFeed(Integer id) {
+        log.info("Проверяем создан ли пользователь с id {}", id);
+        User user = getUserById(id);
+        log.info("Пользователь с id {} найден:{}", id, user);
+        log.info("Получаем лист событий {} найден:{}", eventStorage.getEventsByUserId(id));
+        return eventStorage.getEventsByUserId(id);
+    }
+
 
     public List<Film> getUsersRecommendations(Integer id) {
         List<Integer> recommendUserFilms = filmStorage.getUsersRecommendations(id);

@@ -3,11 +3,15 @@ package ru.yandex.practicum.filmorate.service;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import ru.yandex.practicum.filmorate.dao.event.EventStorage;
 import ru.yandex.practicum.filmorate.dao.impl.FilmDbStorage;
 import ru.yandex.practicum.filmorate.dao.impl.UserDbStorage;
 import ru.yandex.practicum.filmorate.dao.review.ReviewDbStorage;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
+import ru.yandex.practicum.filmorate.model.Event;
+import ru.yandex.practicum.filmorate.model.EventType;
+import ru.yandex.practicum.filmorate.model.Operation;
 import ru.yandex.practicum.filmorate.model.Review;
 
 import java.util.List;
@@ -21,6 +25,7 @@ public class ReviewServiceImpl implements ReviewService {
     private final FilmDbStorage filmDbStorage;
     private final UserDbStorage userDbStorage;
     private final ReviewDbStorage reviewDbStorage;
+    private final EventStorage eventStorage;
 
     private final Integer defaultCountReview = 10;
 
@@ -28,7 +33,10 @@ public class ReviewServiceImpl implements ReviewService {
         validate(review);
         checkingForExistenceUser(review.getUserId());
         checkingForExistenceFilm(review.getFilmId());
-        return reviewDbStorage.createReview(review);
+        Review rew = reviewDbStorage.createReview(review);
+        eventStorage.add(new Event(rew.getUserId(), EventType.REVIEW, rew.getReviewId(), Operation.ADD));
+        log.info("Добавляем пользователю {} событие {} - {} с фильмом {}", rew.getUserId(), EventType.REVIEW, Operation.ADD, rew.getFilmId());
+        return rew;
     }
 
     public List<Review> getReview(Integer filmId, Integer count) {
@@ -55,12 +63,18 @@ public class ReviewServiceImpl implements ReviewService {
         validate(review);
         checkingForExistenceReview(review.getReviewId());
         log.info("Редактирование уже имеющегося отзыва: {}", review);
-        return reviewDbStorage.updateReview(review);
+        Review rew = reviewDbStorage.updateReview(review);
+        eventStorage.add(new Event(rew.getUserId(), EventType.REVIEW, rew.getReviewId(), Operation.UPDATE));
+        log.info("Добавляем пользователю {} событие {} - {} с фильмом {}", rew.getUserId(), EventType.REVIEW, Operation.UPDATE, rew.getFilmId());
+        return rew;
     }
 
     public void deleteReviewById(Integer reviewId) {
         checkingForExistenceReview(reviewId);
         log.info("Удаление уже имеющегося отзыва c ИД: {}", reviewId);
+        Review rew = getReviewById(reviewId);
+        eventStorage.add(new Event(rew.getUserId(), EventType.REVIEW, rew.getReviewId(), Operation.REMOVE));
+        log.info("Добавляем пользователю {} событие {} - {} с фильмом {}", rew.getUserId(), EventType.REVIEW, Operation.REMOVE, rew.getFilmId());
         reviewDbStorage.deleteReviewById(reviewId);
     }
 

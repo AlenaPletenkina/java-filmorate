@@ -5,12 +5,11 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
+import ru.yandex.practicum.filmorate.dao.event.EventStorage;
 import ru.yandex.practicum.filmorate.dao.like.LikeDbStorage;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
-import ru.yandex.practicum.filmorate.model.Director;
-import ru.yandex.practicum.filmorate.model.Film;
-import ru.yandex.practicum.filmorate.model.Genre;
+import ru.yandex.practicum.filmorate.model.*;
 import ru.yandex.practicum.filmorate.storage.film.FilmStorage;
 import ru.yandex.practicum.filmorate.storage.user.UserStorage;
 
@@ -33,28 +32,39 @@ public class FilmServiceImpl implements FilmService {
     private final LikeDbStorage likeDbStorage;
     private final GenreService genreService;
     private final DirectorService directorService;
+    private final EventStorage eventStorage;
+
 
     @Autowired
     public FilmServiceImpl(@Qualifier("H2FilmDb") FilmStorage filmStorage,
                            ObjectMapper objectMapper, @Qualifier("H2UserDb") UserStorage userStorage,
-                           LikeDbStorage likeDbStorage, GenreService genreService, DirectorService directorService) {
+                           LikeDbStorage likeDbStorage, GenreService genreService, DirectorService directorService,
+                           EventStorage eventStorage) {
         this.filmStorage = filmStorage;
         this.objectMapper = objectMapper;
         this.userStorage = userStorage;
         this.likeDbStorage = likeDbStorage;
         this.genreService = genreService;
         this.directorService = directorService;
+        this.eventStorage = eventStorage;
     }
 
     @Override
     public void addLike(Integer filmId, Integer userId) {
         validateUserId(userId);
+        validateFilmId(filmId);
         likeDbStorage.addLike(filmId, userId);
+        log.info("Добавляем пользователю {} событие {} - {} с фильмом {}", userId, EventType.LIKE, Operation.ADD, filmId);
+        eventStorage.add(new Event(userId, EventType.LIKE, filmId, Operation.ADD));
     }
 
     @Override
     public void deleteLike(Integer filmId, Integer userId) {
+
         validateUserId(userId);
+        User user = userStorage.getUserById(userId);
+        log.info("Добавляем пользователю {} событие {} - {} с фильмом {}", user, EventType.LIKE, Operation.REMOVE, filmId);
+        eventStorage.add(new Event(userId, EventType.LIKE, filmId, Operation.REMOVE));
         likeDbStorage.deleteLike(filmId, userId);
     }
 
@@ -229,9 +239,20 @@ public class FilmServiceImpl implements FilmService {
     }
 
     private void validateUserId(Integer id) {
+        log.info("Зашли в метод validateUserId с юзером с id {}", id);
         if (userStorage.getUserById(id) == null) {
             throw new NotFoundException("Пользователь с id " + id + " не найден");
         }
+        log.info("Проверка прошла успешно юзер {} - существует", userStorage.getUserById(id));
+    }
+
+    private void validateFilmId(Integer id) {
+        log.info("Зашли в метод validateFilmId с фильмом с id {}", id);
+        if (isNull(filmStorage.getFilm(id))) {
+            throw new NotFoundException("Фильма с таким id не существует");
+        }
+        log.info("Проверка прошла успешно фильм {} - существует", filmStorage.getFilm(id));
+
     }
 
     @Override

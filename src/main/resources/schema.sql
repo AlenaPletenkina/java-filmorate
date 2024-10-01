@@ -90,3 +90,13 @@ CREATE TABLE IF NOT EXISTS FILM_DIRECTOR
     FOREIGN KEY (director_id) REFERENCES directors (director_id) ON DELETE CASCADE,
     FOREIGN KEY (film_id) REFERENCES film (film_id) ON DELETE CASCADE
 );
+CREATE TABLE IF NOT EXISTS EVENTS
+(
+    event_id INT PRIMARY KEY AUTO_INCREMENT,
+    user_id INT NOT NULL,
+    event_type VARCHAR(10) NOT NULL,
+    operation VARCHAR(10) NOT NULL,
+    entity_id INT NOT NULL,
+    TIMESTAMP BIGINT NOT NULL,
+    CONSTRAINT fk_events_users FOREIGN KEY (user_id) REFERENCES USERS(user_id)
+);

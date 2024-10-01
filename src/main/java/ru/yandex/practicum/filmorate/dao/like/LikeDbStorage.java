@@ -1,5 +1,6 @@
 package ru.yandex.practicum.filmorate.dao.like;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
@@ -10,6 +11,7 @@ import java.sql.PreparedStatement;
 import java.sql.Statement;
 
 @Repository
+@Slf4j
 public class LikeDbStorage implements LikeStorage {
 
     private final JdbcTemplate jdbcTemplate;
@@ -53,4 +55,5 @@ public class LikeDbStorage implements LikeStorage {
         String sql = UtilReader.readString(SQL_QUERY_DIR + "deleteByFilmId.sql");
         jdbcTemplate.update(sql, filmId);
     }
+
 }

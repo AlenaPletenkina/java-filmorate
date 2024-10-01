@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+import ru.yandex.practicum.filmorate.model.Event;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.service.UserService;
@@ -82,6 +83,12 @@ public class UserController {
     public List<User> getMutualFriends(@PathVariable Integer id, @PathVariable("other-id") Integer otherId) {
         log.info("Получил запрос на получение общих друзей у пользователя с id {} и пользователя с id {}", id, otherId);
         return userService.getMutualFriends(id, otherId);
+    }
+
+    @GetMapping(path + "/{id}/feed")
+    public List<Event> getUserFeed(@PathVariable Integer id) {
+        log.info("Запрос на получение списка событий пользователя с id {}", id);
+        return userService.getUserFeed(id);
     }
 
     @GetMapping(path + "/{id}/recommendations")
