@@ -27,7 +27,7 @@ public class FilmDbStorage implements FilmStorage {
     private static final String INSERT_SQL_QUERY = UtilReader.readString(SQL_QUERY_DIR + "insert.sql");
     private static final String UPDATE_SQL_QUERY = UtilReader.readString(SQL_QUERY_DIR + "update.sql");
     private static final String SELECT_FAVORITE_FILMS_USER_ID_SQL_QUERY = UtilReader.readString(SQL_QUERY_DIR +
-             "like/select_favorite_films_user_by_id.sql");
+            "like/select_favorite_films_user_by_id.sql");
     private static final String SELECT_RECOMMENDATIONS_FILMS_ID_SQL_QUERY = UtilReader.readString(SQL_QUERY_DIR +
             "like/select_recommendations_films_id.sql");
     private static final String DIRECTOR_ORDER_BY_YEAR_SQL_QUERY = UtilReader.readString(SQL_QUERY_DIR +
@@ -36,6 +36,9 @@ public class FilmDbStorage implements FilmStorage {
             "director/director_order_by_likes.sql");
     private static final String SELECT_TOP_FILMS_WITH_FILTERS = UtilReader.readString(SQL_QUERY_DIR +
             "get_films_with_filters.sql");
+
+    private static final String SEARCH_FILMS_BY_TITLE_SQL_QUERY = UtilReader.readString(SQL_QUERY_DIR + "search-films-by-title.sql");
+    private static final String SEARCH_FILMS_BY_DIRECTOR_SQL_QUERY = UtilReader.readString(SQL_QUERY_DIR + "search-films-by-director.sql");
 
     @Override
     public Film addFilm(Film object) {
@@ -101,7 +104,7 @@ public class FilmDbStorage implements FilmStorage {
     @Override
     public List<Film> getTopFilmsWithFilters(Integer genreId, Integer year) {
         return jdbcTemplate.query(SELECT_TOP_FILMS_WITH_FILTERS,
-                new Object[] { genreId, year},
+                new Object[]{genreId, year},
                 new FilmMapper());
     }
 
@@ -119,5 +122,15 @@ public class FilmDbStorage implements FilmStorage {
         List<Film> films = jdbcTemplate.query(DIRECTOR_ORDER_BY_LIKES_SQL_QUERY, new FilmMapper(), id);
 
         return films;
+    }
+
+    @Override
+    public List<Film> searchFilmsByTitle(String query) {
+        return jdbcTemplate.query(SEARCH_FILMS_BY_TITLE_SQL_QUERY, new FilmMapper(), "%" + query.toLowerCase() + "%");
+    }
+
+    @Override
+    public List<Film> searchFilmsByDirector(String query) {
+        return jdbcTemplate.query(SEARCH_FILMS_BY_DIRECTOR_SQL_QUERY, new FilmMapper(), "%" + query.toLowerCase() + "%");
     }
 }
