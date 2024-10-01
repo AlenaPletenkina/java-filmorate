@@ -240,8 +240,8 @@ public class FilmServiceImpl implements FilmService {
 
     private void validateUserId(Integer id) {
         log.info("Зашли в метод validateUserId с юзером с id {}", id);
-        if (isNull(userStorage.getUserById(id))) {
-            throw new NotFoundException("Пользователя с таким id не существует");
+        if (userStorage.getUserById(id) == null) {
+            throw new NotFoundException("Пользователь с id " + id + " не найден");
         }
         log.info("Проверка прошла успешно юзер {} - существует", userStorage.getUserById(id));
     }
@@ -252,9 +252,7 @@ public class FilmServiceImpl implements FilmService {
             throw new NotFoundException("Фильма с таким id не существует");
         }
         log.info("Проверка прошла успешно фильм {} - существует", filmStorage.getFilm(id));
-        if (userStorage.getUserById(id) == null) {
-            throw new NotFoundException("Пользователь с id " + id + " не найден");
-        }
+
     }
 
     @Override
