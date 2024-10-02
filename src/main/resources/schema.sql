@@ -32,16 +32,16 @@ CREATE TABLE IF NOT EXISTS FILM_GENRES
 (
     film_id  INT,
     genre_id INT,
-    FOREIGN KEY (film_id) REFERENCES FILM (film_id),
-    FOREIGN KEY (genre_id) REFERENCES GENRES (genre_id),
+    FOREIGN KEY (film_id) REFERENCES FILM (film_id) ON DELETE CASCADE,
+    FOREIGN KEY (genre_id) REFERENCES GENRES (genre_id) ON DELETE CASCADE,
     PRIMARY KEY (film_id, genre_id)
 );
 CREATE TABLE IF NOT EXISTS FILM_LIKES
 (
     film_id INT,
     user_id INT,
-    FOREIGN KEY (film_id) REFERENCES FILM (film_id),
-    FOREIGN KEY (user_id) REFERENCES USERS (user_id),
+    FOREIGN KEY (film_id) REFERENCES FILM (film_id) ON DELETE CASCADE,
+    FOREIGN KEY (user_id) REFERENCES USERS (user_id) ON DELETE CASCADE,
     PRIMARY KEY (film_id, user_id)
 );
 CREATE TABLE IF NOT EXISTS USER_FRIENDS
@@ -49,8 +49,8 @@ CREATE TABLE IF NOT EXISTS USER_FRIENDS
     user_id   INT,
     friend_id INT,
     status    BOOLEAN,
-    FOREIGN KEY (user_id) REFERENCES USERS (user_id),
-    FOREIGN KEY (friend_id) REFERENCES USERS (user_id),
+    FOREIGN KEY (user_id) REFERENCES USERS (user_id) ON DELETE CASCADE,
+    FOREIGN KEY (friend_id) REFERENCES USERS (user_id) ON DELETE CASCADE,
     PRIMARY KEY (user_id, friend_id)
 );
 CREATE TABLE IF NOT EXISTS REVIEWS
@@ -98,5 +98,5 @@ CREATE TABLE IF NOT EXISTS EVENTS
     operation VARCHAR(10) NOT NULL,
     entity_id INT NOT NULL,
     TIMESTAMP BIGINT NOT NULL,
-    CONSTRAINT fk_events_users FOREIGN KEY (user_id) REFERENCES USERS(user_id)
+    CONSTRAINT fk_events_users FOREIGN KEY (user_id) REFERENCES USERS(user_id) ON DELETE CASCADE
 );

@@ -26,16 +26,18 @@ public class UserServiceImpl implements UserService {
     private final UserStorage userStorage;
     private final FriendStorage friendStorage;
     private final FilmDbStorage filmStorage;
+    private final FilmService filmService;
     private final EventStorage eventStorage;
 
 
     @Autowired
     public UserServiceImpl(@Qualifier("H2UserDb") UserStorage userStorage, FriendStorage friendStorage, EventStorage eventStorage,
-                           @Qualifier("H2FilmDb") FilmDbStorage filmStorage) {
+                           @Qualifier("H2FilmDb") FilmDbStorage filmStorage, FilmService filmService) {
         this.userStorage = userStorage;
         this.friendStorage = friendStorage;
         this.filmStorage = filmStorage;
         this.eventStorage = eventStorage;
+        this.filmService = filmService;
     }
 
     @Override
@@ -123,7 +125,7 @@ public class UserServiceImpl implements UserService {
         log.info("Проверяем создан ли пользователь с id {}", id);
         User user = getUserById(id);
         log.info("Пользователь с id {} найден:{}", id, user);
-        log.info("Получаем лист событий {} найден:{}", eventStorage.getEventsByUserId(id));
+        log.info("Получаем лист событий найден:{}", eventStorage.getEventsByUserId(id));
         return eventStorage.getEventsByUserId(id);
     }
 
@@ -137,7 +139,7 @@ public class UserServiceImpl implements UserService {
         List<Film> recommendFilms = new ArrayList<>();
 
         for (Integer indexFilm : recommendUserFilms) {
-            recommendFilms.add(filmStorage.getFilm(indexFilm));
+            recommendFilms.add(filmService.getFilm(indexFilm));
         }
         return recommendFilms;
     }

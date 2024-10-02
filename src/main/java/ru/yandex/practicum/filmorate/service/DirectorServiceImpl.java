@@ -1,6 +1,7 @@
 package ru.yandex.practicum.filmorate.service;
 
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
+import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.Director;
 import ru.yandex.practicum.filmorate.dao.director.DirectorStorage;
 
@@ -23,6 +24,9 @@ public class DirectorServiceImpl implements DirectorService {
     @Override
     public Director create(Director director) {
         log.info("Добавляем режиссера в коллекцию");
+        if (director.getName().isBlank()){
+            throw new ValidationException("Имя директора не может быть пустым");
+        }
         return directorStorage.save(director);
     }
 

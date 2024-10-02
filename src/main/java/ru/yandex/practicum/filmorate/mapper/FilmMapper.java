@@ -18,7 +18,6 @@ public class FilmMapper implements RowMapper<Film> {
     @Override
     public Film mapRow(ResultSet rs, int rowNum) throws SQLException {
         Rating mpa = new Rating(rs.getInt("rating_id"), rs.getString("rating_name"));
-        Set<Long> likes = new LinkedHashSet<>();
         Set<Genre> genres = new LinkedHashSet<>();
         Set<Director> directors = new LinkedHashSet<>();
 

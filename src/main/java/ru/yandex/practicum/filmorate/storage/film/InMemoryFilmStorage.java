@@ -88,7 +88,7 @@ public class InMemoryFilmStorage implements FilmStorage {
     }
 
     @Override
-    public List<Film> getTopFilmsWithFilters(Integer genreId, Integer year) {
+    public List<Film> getTopFilmsWithFilters(Integer genreId, Integer year, Integer count) {
         return films.values().stream()
                 .filter(film -> {
                     if (genreId != null) {

@@ -126,20 +126,20 @@ public class ReviewServiceImpl implements ReviewService {
     }
 
     private void validate(Review review) {
-        if (review.getContent().isEmpty()) {
+        if (isNull(review.getContent()) || review.getContent().isEmpty()) {
             log.error("Пустой отзыв{}", review);
             throw new ValidationException("Отзыв не может быть пустым");
         }
         if (isNull(review.getIsPositive())) {
-            log.error("Пустой рейтинг {}", review.getIsPositive());
+            log.error("Пустой рейтинг");
             throw new ValidationException("Рейтинг не может быть пустым");
         }
         if (isNull(review.getUserId())) {
-            log.error("Id пользователя не может быть пустым {}", review.getUserId());
+            log.error("Id пользователя не может быть пустым");
             throw new ValidationException("Id пользователя не может быть пустым");
         }
         if (isNull(review.getFilmId())) {
-            log.error("Id фильма не может быть пустым {}", review.getFilmId());
+            log.error("Id фильма не может быть пустым");
             throw new ValidationException("Id фильма не может быть пустым");
         }
     }

@@ -24,11 +24,6 @@ WHERE FL.FILM_ID IN (SELECT F.FILM_ID -- Лимит фильмов
                      GROUP BY F.FILM_ID
                      ORDER BY COUNT(FI_LI.USER_ID) DESC, F.FILM_ID
                      LIMIT ?)
-  AND  FL.FILM_ID = (SELECT M_G.FILM_ID -- Вывод фильмов с соответствующему жанру
-                     FROM FILM_GENRES AS M_G
-                     WHERE  M_G.FILM_ID = FL.FILM_ID AND M_G.GENRE_ID = ? AND M_G.GENRE_ID IS NOT NULL
-    )
-AND EXTRACT(YEAR FROM FL.RELEASE_DATE) = ? -- Вывод фильмов за определенный год
 
 GROUP BY GENRE_NAME, FL.FILM_ID
 ORDER BY rate DESC, film_id, GENRE_NAME;                 -- количество выгружаемых записей

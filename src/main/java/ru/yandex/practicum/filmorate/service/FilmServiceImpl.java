@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.dao.DuplicateKeyException;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.dao.event.EventStorage;
 import ru.yandex.practicum.filmorate.dao.like.LikeDbStorage;
@@ -14,10 +15,7 @@ import ru.yandex.practicum.filmorate.storage.film.FilmStorage;
 import ru.yandex.practicum.filmorate.storage.user.UserStorage;
 
 import java.time.LocalDate;
-import java.util.HashSet;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static java.util.Objects.isNull;
@@ -53,9 +51,13 @@ public class FilmServiceImpl implements FilmService {
     public void addLike(Integer filmId, Integer userId) {
         validateUserId(userId);
         validateFilmId(filmId);
-        likeDbStorage.addLike(filmId, userId);
-        log.info("Добавляем пользователю {} событие {} - {} с фильмом {}", userId, EventType.LIKE, Operation.ADD, filmId);
-        eventStorage.add(new Event(userId, EventType.LIKE, filmId, Operation.ADD));
+        try {
+            likeDbStorage.addLike(filmId, userId);
+            eventStorage.add(new Event(userId, EventType.LIKE, filmId, Operation.ADD));
+            log.info("Добавляем пользователю {} событие {} - {} с фильмом {}", userId, EventType.LIKE, Operation.ADD, filmId);
+        } catch (DuplicateKeyException e) {
+            log.error("Пользователь уже лайкнул данны фильм");
+        }
     }
 
     @Override
@@ -68,17 +70,22 @@ public class FilmServiceImpl implements FilmService {
         likeDbStorage.deleteLike(filmId, userId);
     }
 
+    @Deprecated
     @Override
     public List<Film> getPopularFilms(Integer count) {
-        List<Film> films = filmStorage.getAllFilms().stream()
-                .filter(f -> nonNull(f.getLikes()))
-                .sorted((f1, f2) -> f2.getLikes() - f1.getLikes())
-                .collect(Collectors.toList());
+        Set<Film> films = new HashSet<>(filmStorage.getAllFilms());
+
+        for (Film film : films) {
+            List<Genre> filmGenres = genreService.getFilmGenres(film.getId());
+            List<Director> filmDirectors = directorService.getFilmDirectors(film.getId());
+            film.getGenres().addAll(filmGenres);
+            film.getDirectors().addAll(filmDirectors);
+        }
 
         if (count != null) {
             return films.stream().limit(count).collect(Collectors.toList());
         } else {
-            return films;
+            return new ArrayList<>(films);
         }
     }
 
@@ -212,15 +219,15 @@ public class FilmServiceImpl implements FilmService {
     }
 
     @Override
-    public List<Film> getTopFilmsWithFilters(Integer genreId, Integer year) {
-        List<Film> films = filmStorage.getTopFilmsWithFilters(genreId, year);
+    public List<Film> getTopFilmsWithFilters(Integer genreId, Integer year, Integer count) {
+        Set<Film> films = new HashSet<>(filmStorage.getTopFilmsWithFilters(count, genreId, year));
         for (Film film : films) {
             List<Genre> filmGenres = genreService.getFilmGenres(film.getId());
             film.setGenres(new LinkedHashSet<>(filmGenres));
             List<Director> filmDirectors = directorService.getFilmDirectors(film.getId());
             film.setDirectors(new LinkedHashSet<>(filmDirectors));
         }
-        return films;
+        return films.stream().toList();
     }
 
     public List<Film> getCommonFilms(Integer userId, Integer friendId) {

@@ -60,9 +60,18 @@ public class FilmController {
     }
 
     @GetMapping(path + "/popular")
-    public List<Film> getPopularFilms(@RequestParam(required = false) Integer count) {
-        log.info("Получил запрос на получение популярных фильмов, количество = {}", count);
-        return filmService.getPopularFilms(count);
+    public List<Film> getPopularFilms(@RequestParam(required = false, defaultValue = "10") Integer count,
+                                      @RequestParam(required = false) Integer genreId,
+                                      @RequestParam(required = false) Integer year) {
+
+        log.info("Получил запрос на получение популярных фильмов, количество = {}, жанр = {}, год {}", count, genreId, year);
+        List<Film> topFilms = filmService.getTopFilmsWithFilters(genreId, year, count);
+        try {
+            log.info("Получил список самых популярных фильмов, response:{}", objectMapper.writeValueAsString(topFilms));
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e);
+        }
+        return topFilms;
     }
 
     @GetMapping(path + "/{film-id}")
@@ -77,12 +86,6 @@ public class FilmController {
         filmService.deleteFilmById(id);
     }
 
-    @GetMapping("/popular")
-    public List<Film> getPopularFilmsWithFilters(
-            @RequestParam(required = false) Integer genreId,
-            @RequestParam(required = false) Integer year) {
-        return filmService.getTopFilmsWithFilters(genreId, year);
-    }
 
     @GetMapping(path + "/common")
     public List<Film> getCommonFilms(@RequestParam("userId") Integer userId, @RequestParam("friendId") Integer friendId) {

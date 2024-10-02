@@ -16,12 +16,17 @@ import java.sql.PreparedStatement;
 import java.sql.Statement;
 import java.util.List;
 
+import static java.util.Objects.isNull;
+
 @Component(value = "H2FilmDb")
 @Repository
 @RequiredArgsConstructor
 public class FilmDbStorage implements FilmStorage {
     private final JdbcTemplate jdbcTemplate;
     private static final String SQL_QUERY_DIR = "src/main/resources/sql/query/film/";
+    private static final String SELECT_TOP_FILMS_WITH_COUNT = UtilReader.readString(SQL_QUERY_DIR + "select_top_with_count.sql");
+    private static final String SELECT_TOP_FILMS_WITH_YEAR = UtilReader.readString(SQL_QUERY_DIR + "select_top_with_year.sql");
+    private static final String SELECT_TOP_FILMS_WITH_GENRE = UtilReader.readString(SQL_QUERY_DIR + "select_top_with_genre.sql");
     private static final String SELECT_ALL_SQL_QUERY = UtilReader.readString(SQL_QUERY_DIR + "select_all.sql");
     private static final String SELECT_BY_ID_SQL_QUERY = UtilReader.readString(SQL_QUERY_DIR + "select_by_id.sql");
     private static final String INSERT_SQL_QUERY = UtilReader.readString(SQL_QUERY_DIR + "insert.sql");
@@ -102,10 +107,16 @@ public class FilmDbStorage implements FilmStorage {
     }
 
     @Override
-    public List<Film> getTopFilmsWithFilters(Integer genreId, Integer year) {
+    public List<Film> getTopFilmsWithFilters(Integer count, Integer genreId, Integer yearValue) {
+        if (isNull(genreId) && isNull(yearValue)) {
+            return jdbcTemplate.query(SELECT_TOP_FILMS_WITH_COUNT, new FilmMapper(), count);
+        } else if (isNull(genreId)) {
+            return jdbcTemplate.query(SELECT_TOP_FILMS_WITH_YEAR, new FilmMapper(), count, yearValue);
+        } else if (isNull(yearValue)) {
+            return jdbcTemplate.query(SELECT_TOP_FILMS_WITH_GENRE, new FilmMapper(),count, genreId);
+        }
         return jdbcTemplate.query(SELECT_TOP_FILMS_WITH_FILTERS,
-                new Object[]{genreId, year},
-                new FilmMapper());
+                new FilmMapper(), count, genreId, yearValue);
     }
 
     @Override

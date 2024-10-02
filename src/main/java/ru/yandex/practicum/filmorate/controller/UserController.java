@@ -88,7 +88,13 @@ public class UserController {
     @GetMapping(path + "/{id}/feed")
     public List<Event> getUserFeed(@PathVariable Integer id) {
         log.info("Запрос на получение списка событий пользователя с id {}", id);
-        return userService.getUserFeed(id);
+        List<Event> userFeed = userService.getUserFeed(id);
+        try {
+            log.info("Получил список событий пользователя с id {} - {},", id, objectMapper.writeValueAsString(userFeed));
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e);
+        }
+        return userFeed;
     }
 
     @GetMapping(path + "/{id}/recommendations")
