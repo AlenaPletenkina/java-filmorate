@@ -53,10 +53,11 @@ public class FilmServiceImpl implements FilmService {
         validateFilmId(filmId);
         try {
             likeDbStorage.addLike(filmId, userId);
-            eventStorage.add(new Event(userId, EventType.LIKE, filmId, Operation.ADD));
             log.info("Добавляем пользователю {} событие {} - {} с фильмом {}", userId, EventType.LIKE, Operation.ADD, filmId);
         } catch (DuplicateKeyException e) {
             log.error("Пользователь уже лайкнул данны фильм");
+        } finally {
+            eventStorage.add(new Event(userId, EventType.LIKE, filmId, Operation.ADD));
         }
     }
 
