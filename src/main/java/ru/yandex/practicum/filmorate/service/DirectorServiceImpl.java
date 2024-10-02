@@ -24,7 +24,7 @@ public class DirectorServiceImpl implements DirectorService {
     @Override
     public Director create(Director director) {
         log.info("Добавляем режиссера в коллекцию");
-        if (director.getName().isBlank()){
+        if (director.getName().isBlank()) {
             throw new ValidationException("Имя директора не может быть пустым");
         }
         return directorStorage.save(director);
