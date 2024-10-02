@@ -44,7 +44,7 @@ public class InMemoryUserStorage implements UserStorage {
     @Override
     public User getUserById(Integer id) {
         if (!users.containsKey(id)) {
-            throw new NotFoundException("Пользователь с id " + id + " не существует");
+            throw new NotFoundException(String.format("Пользователь с id %d не существует", id));
         }
         return users.get(id);
     }
@@ -60,7 +60,7 @@ public class InMemoryUserStorage implements UserStorage {
     @Override
     public void deleteUserById(Integer id) {
         if (!users.containsKey(id)) {
-            throw new ValidationException("Пользователь с id " + id + " не существует");
+            throw new NotFoundException(String.format("Пользователь с id %d не существует", id));
         }
         users.remove(id);
     }

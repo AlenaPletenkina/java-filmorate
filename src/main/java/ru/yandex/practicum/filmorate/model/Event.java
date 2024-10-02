@@ -2,6 +2,7 @@ package ru.yandex.practicum.filmorate.model;
 
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
+import lombok.experimental.FieldDefaults;
 
 import java.time.Instant;
 
@@ -11,18 +12,19 @@ import java.time.Instant;
 @EqualsAndHashCode(of = "eventId")
 @NoArgsConstructor
 @AllArgsConstructor
+@FieldDefaults(level = AccessLevel.PRIVATE)
 public class Event {
 
-    private Integer eventId;
+    Integer eventId;
     @NotNull
-    private Integer userId;
+    Integer userId;
     @NotNull
-    private EventType eventType;
+    EventType eventType;
     @NotNull
-    private Integer entityId;
+    Integer entityId;
     @NotNull
-    private Operation operation;
-    private Long timestamp = Instant.now().toEpochMilli();
+    Operation operation;
+    Long timestamp = Instant.now().toEpochMilli();
 
     public Event(Integer userId, EventType eventType, Integer entityId, Operation operation) {
         this.userId = userId;
