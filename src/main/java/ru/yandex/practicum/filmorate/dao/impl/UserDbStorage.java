@@ -75,8 +75,18 @@ public class UserDbStorage implements UserStorage {
         return jdbcTemplate.query(SELECT_BY_ID_SQL_QUERY, new UserMapper(), id).stream().findAny().orElse(null);
     }
 
+    public boolean contains(Integer userId) {
+        return getUserById(userId) != null;
+    }
+
     @Override
     public void deleteUser(User user) {
 //TODO
+    }
+
+    @Override
+    public void deleteUserById(Integer id) {
+        String deleteSql = UtilReader.readString(SQL_QUERY_DIR + "delete_by_id.sql");
+        jdbcTemplate.update(deleteSql, id);
     }
 }

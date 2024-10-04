@@ -1,0 +1,5 @@
+SELECT DIRECTORS.director_id, name
+FROM FILM_DIRECTOR
+LEFT JOIN DIRECTORS ON FILM_DIRECTOR.director_id = DIRECTORS.director_id
+WHERE film_id = ?
+ORDER BY DIRECTORS.director_id

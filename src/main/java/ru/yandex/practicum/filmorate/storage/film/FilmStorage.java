@@ -14,4 +14,18 @@ public interface FilmStorage {
     Film getFilm(Integer id);
 
     void deleteFilm(Film film);
+
+    void deleteFilmById(Integer id);
+
+    List<Film> getTopFilmsWithFilters(Integer count, Integer genreId, Integer year);
+
+    List<Integer> getFilmsUserById(Integer userId);
+
+    List<Film> getSortedDirectorsFilmsByYears(long id);
+
+    List<Film> getSortedDirectorsFilmsByLikes(long id);
+
+    List<Film> searchFilmsByTitle(String query);
+
+    List<Film> searchFilmsByDirector(String query);
 }

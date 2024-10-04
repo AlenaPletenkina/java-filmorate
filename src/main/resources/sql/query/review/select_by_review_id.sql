@@ -1,0 +1,3 @@
+SELECT *
+FROM REVIEWS
+WHERE review_id = ?

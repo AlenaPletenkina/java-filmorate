@@ -16,6 +16,7 @@ import ru.yandex.practicum.filmorate.storage.film.FilmStorage;
 import ru.yandex.practicum.filmorate.utill.UtilReader;
 
 import java.time.LocalDate;
+import java.util.LinkedHashSet;
 
 
 @JdbcTest
@@ -34,6 +35,7 @@ class FilmDbStorageTest {
             220,
             0,
             new Rating(1, "G"),
+            null,
             null);
 
     @BeforeEach
@@ -59,7 +61,9 @@ class FilmDbStorageTest {
                 100,
                 1,
                 new Rating(3, "PG-13"),
-                null);
+                new LinkedHashSet<>(), // Устанавливаем пустое множество
+                new LinkedHashSet<>()  // Устанавливаем пустое множество
+        );
         Assertions.assertEquals(film, filmStorage.getFilm(1));
     }
 
@@ -67,13 +71,18 @@ class FilmDbStorageTest {
     void addTest() {
         testFilm.setId(4);
         testFilm.setLikes(0);
+        testFilm.setGenres(new LinkedHashSet<>()); // Устанавливаем пустое множество
+        testFilm.setDirectors(new LinkedHashSet<>()); // Устанавливаем пустое множество
         Assertions.assertEquals(testFilm, filmStorage.addFilm(testFilm));
     }
+
 
     @Test
     void updateTest() {
         testFilm.setId(1);
         testFilm.setLikes(1);
+        testFilm.setGenres(new LinkedHashSet<>()); // Устанавливаем пустое множество
+        testFilm.setDirectors(new LinkedHashSet<>()); // Устанавливаем пустое множество
         Assertions.assertEquals(testFilm, filmStorage.updateFilm(testFilm));
     }
 }
